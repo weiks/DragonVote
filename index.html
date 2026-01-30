@@ -5,6 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DragonVOTE - Principles-Based Proxy Voting</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            dragon: {
+              50: '#f0f7f7',
+              100: '#d9ebeb',
+              200: '#b3d7d7',
+              300: '#8dc3c3',
+              400: '#5a9e9e',
+              500: '#3d7a7a',
+              600: '#2d5c5c',
+              700: '#1f4545',
+              800: '#1a3a3a',
+              900: '#14302f',
+              950: '#0d1f1f',
+            }
+          }
+        }
+      }
+    }
+  </script>
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -13,7 +36,7 @@
     body { font-family: system-ui, -apple-system, sans-serif; }
   </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-dragon-50">
   <div id="root"></div>
   
   <script type="text/babel">
@@ -42,6 +65,7 @@
       Bell: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>,
       Filter: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>,
       Edit: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>,
+      Dragon: ({className}) => <svg className={className} viewBox="0 0 100 80" fill="currentColor"><path d="M85 15c-5-8-15-12-25-10-3-4-8-5-13-3-8-4-18-2-24 5-10 2-18 10-20 20-3 8 0 17 7 22l5 3c-2 5-1 11 3 15 5 5 13 6 19 2l8 6c8 5 19 3 25-5 4-5 5-12 3-18 8-5 13-15 12-25 0-5-1-9-3-12h3zm-50 45c-3 0-5-2-5-5s2-5 5-5 5 2 5 5-2 5-5 5z"/></svg>,
     };
 
     // ==================== DATA ====================
@@ -205,7 +229,7 @@ We generally defer to management on routine matters while maintaining oversight 
 
     // ==================== MAIN APP ====================
     function App() {
-      const [mode, setMode] = useState('onboarding');
+      const [mode, setMode] = useState('landing');
       const [step, setStep] = useState(1);
       const [selectedTemplate, setSelectedTemplate] = useState(null);
       const [policyText, setPolicyText] = useState('');
@@ -258,29 +282,137 @@ We generally defer to management on routine matters while maintaining oversight 
 
       const setVote = (key, val) => setVotes(v => ({...v, [key]: val}));
 
+      // ========== LANDING PAGE RENDER ==========
+      if (mode === 'landing') {
+        return (
+          <div className="min-h-screen bg-dragon-50">
+            {/* Header */}
+            <header className="bg-white border-b border-dragon-100">
+              <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-dragon-800 rounded-lg flex items-center justify-center">
+                    <Icons.Dragon className="w-7 h-7 text-white" />
+                  </div>
+                  <div>
+                    <h1 className="font-bold text-dragon-900">Dragon<span className="text-dragon-600">VOTE</span></h1>
+                  </div>
+                </div>
+                <a href="https://www.dragongc.com" target="_blank" rel="noopener noreferrer" className="text-sm text-dragon-600 hover:text-dragon-800">
+                  by DragonGC
+                </a>
+              </div>
+            </header>
+
+            {/* Hero Section */}
+            <section className="bg-gradient-to-br from-dragon-800 to-dragon-900 text-white py-20">
+              <div className="max-w-4xl mx-auto px-6 text-center">
+                <h1 className="text-4xl md:text-5xl font-bold mb-6">
+                  Principles-Based Proxy Voting
+                </h1>
+                <p className="text-xl text-dragon-100 mb-8 max-w-2xl mx-auto">
+                  Vote your values, automatically. Transform your stewardship policy into actionable voting recommendations—no more manually reviewing hundreds of proxy statements.
+                </p>
+                <button 
+                  onClick={() => setMode('onboarding')}
+                  className="bg-white text-dragon-800 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-dragon-50 transition-colors inline-flex items-center gap-2"
+                >
+                  Get Started <Icons.ArrowRight className="w-5 h-5" />
+                </button>
+              </div>
+            </section>
+
+            {/* Features Section */}
+            <section className="py-20">
+              <div className="max-w-5xl mx-auto px-6">
+                <h2 className="text-3xl font-bold text-dragon-900 text-center mb-12">How It Works</h2>
+                
+                <div className="grid md:grid-cols-2 gap-8">
+                  <div className="bg-white rounded-xl p-6 border border-dragon-100 shadow-sm">
+                    <div className="w-12 h-12 bg-dragon-100 rounded-lg flex items-center justify-center mb-4">
+                      <Icons.FileText className="w-6 h-6 text-dragon-700" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-dragon-900 mb-2">Natural Language Policy Parsing</h3>
+                    <p className="text-dragon-600">Write your stewardship principles in plain English. Our AI extracts voting rules—board independence thresholds, compensation standards, and more.</p>
+                  </div>
+
+                  <div className="bg-white rounded-xl p-6 border border-dragon-100 shadow-sm">
+                    <div className="w-12 h-12 bg-dragon-100 rounded-lg flex items-center justify-center mb-4">
+                      <Icons.Vote className="w-6 h-6 text-dragon-700" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-dragon-900 mb-2">Automated Vote Recommendations</h3>
+                    <p className="text-dragon-600">Get instant FOR/AGAINST recommendations backed by clear rationale tied directly to your policy for every proposal at every meeting.</p>
+                  </div>
+
+                  <div className="bg-white rounded-xl p-6 border border-dragon-100 shadow-sm">
+                    <div className="w-12 h-12 bg-dragon-100 rounded-lg flex items-center justify-center mb-4">
+                      <Icons.Scale className="w-6 h-6 text-dragon-700" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-dragon-900 mb-2">Full Transparency</h3>
+                    <p className="text-dragon-600">See exactly which rules triggered each recommendation, with specific thresholds and company data. No black boxes.</p>
+                  </div>
+
+                  <div className="bg-white rounded-xl p-6 border border-dragon-100 shadow-sm">
+                    <div className="w-12 h-12 bg-dragon-100 rounded-lg flex items-center justify-center mb-4">
+                      <Icons.Edit className="w-6 h-6 text-dragon-700" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-dragon-900 mb-2">Override Flexibility</h3>
+                    <p className="text-dragon-600">Accept the AI recommendation or vote your own way—you're always in control. Review, adjust, and finalize at your pace.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* CTA Section */}
+            <section className="bg-dragon-800 py-16">
+              <div className="max-w-3xl mx-auto px-6 text-center">
+                <h2 className="text-2xl font-bold text-white mb-4">Stop drowning in proxy paperwork.</h2>
+                <p className="text-dragon-200 mb-8">Start voting with purpose.</p>
+                <button 
+                  onClick={() => setMode('onboarding')}
+                  className="bg-white text-dragon-800 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-dragon-50 transition-colors inline-flex items-center gap-2"
+                >
+                  Get Started <Icons.ArrowRight className="w-5 h-5" />
+                </button>
+              </div>
+            </section>
+
+            {/* Footer */}
+            <footer className="bg-dragon-900 text-dragon-300 py-8">
+              <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Icons.Dragon className="w-6 h-6 text-white" />
+                  <span className="text-white font-medium">DragonVOTE</span>
+                </div>
+                <p className="text-sm">© 2025 DragonGC. All rights reserved.</p>
+              </div>
+            </footer>
+          </div>
+        );
+      }
+
       // ========== ONBOARDING RENDER ==========
       if (mode === 'onboarding') {
         return (
-          <div className="min-h-screen bg-gray-100">
+          <div className="min-h-screen bg-dragon-50">
             {/* Header */}
-            <header className="bg-white border-b sticky top-0 z-10">
+            <header className="bg-white border-b border-dragon-100 sticky top-0 z-10">
               <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                    <Icons.Vote className="w-6 h-6 text-white" />
+                  <div className="w-10 h-10 bg-dragon-800 rounded-lg flex items-center justify-center">
+                    <Icons.Dragon className="w-7 h-7 text-white" />
                   </div>
                   <div>
-                    <h1 className="font-bold text-gray-900">DragonVOTE</h1>
-                    <p className="text-xs text-gray-500">Setup Wizard</p>
+                    <h1 className="font-bold text-dragon-900">Dragon<span className="text-dragon-600">VOTE</span></h1>
+                    <p className="text-xs text-dragon-500">Setup Wizard</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   {[1,2,3,4].map(s => (
                     <React.Fragment key={s}>
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step === s ? 'bg-blue-600 text-white' : step > s ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'}`}>
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step === s ? 'bg-dragon-700 text-white' : step > s ? 'bg-dragon-500 text-white' : 'bg-dragon-200 text-dragon-500'}`}>
                         {step > s ? <Icons.Check className="w-4 h-4" /> : s}
                       </div>
-                      {s < 4 && <div className={`w-8 h-1 ${step > s ? 'bg-green-500' : 'bg-gray-200'}`} />}
+                      {s < 4 && <div className={`w-8 h-1 ${step > s ? 'bg-dragon-500' : 'bg-dragon-200'}`} />}
                     </React.Fragment>
                   ))}
                 </div>
@@ -292,36 +424,36 @@ We generally defer to management on routine matters while maintaining oversight 
               {step === 1 && (
                 <div className="space-y-6">
                   <div className="text-center mb-8">
-                    <h2 className="text-2xl font-bold text-gray-900">Select Your Stewardship Policy</h2>
-                    <p className="text-gray-600 mt-2">Choose a policy template that aligns with your investment philosophy</p>
+                    <h2 className="text-2xl font-bold text-dragon-900">Select Your Stewardship Policy</h2>
+                    <p className="text-dragon-600 mt-2">Choose a policy template that aligns with your investment philosophy</p>
                   </div>
                   
                   {Object.values(POLICY_TEMPLATES).map(t => (
                     <div key={t.id} onClick={() => selectTemplate(t.id)}
-                      className={`p-6 border-2 rounded-xl cursor-pointer transition-all ${selectedTemplate === t.id ? 'border-blue-500 bg-blue-50 shadow-lg' : 'border-gray-200 hover:border-gray-300 hover:shadow'}`}>
+                      className={`p-6 border-2 rounded-xl cursor-pointer transition-all ${selectedTemplate === t.id ? 'border-dragon-600 bg-dragon-50 shadow-lg' : 'border-dragon-200 hover:border-dragon-300 hover:shadow'}`}>
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
-                            <h3 className="text-lg font-semibold text-gray-900">{t.name}</h3>
-                            {selectedTemplate === t.id && <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full">Selected</span>}
+                            <h3 className="text-lg font-semibold text-dragon-900">{t.name}</h3>
+                            {selectedTemplate === t.id && <span className="bg-dragon-600 text-white text-xs px-2 py-1 rounded-full">Selected</span>}
                           </div>
-                          <p className="text-sm text-gray-500 mb-3">{t.shortDesc}</p>
-                          <p className="text-sm text-gray-700 line-clamp-3">{t.text.substring(0, 200)}...</p>
+                          <p className="text-sm text-dragon-500 mb-3">{t.shortDesc}</p>
+                          <p className="text-sm text-dragon-700 line-clamp-3">{t.text.substring(0, 200)}...</p>
                         </div>
-                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ml-4 ${selectedTemplate === t.id ? 'border-blue-500 bg-blue-500' : 'border-gray-300'}`}>
+                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ml-4 ${selectedTemplate === t.id ? 'border-dragon-600 bg-dragon-600' : 'border-dragon-300'}`}>
                           {selectedTemplate === t.id && <Icons.Check className="w-4 h-4 text-white" />}
                         </div>
                       </div>
                       <div className="mt-4 pt-4 border-t border-gray-100 grid grid-cols-3 gap-4 text-xs">
-                        <div><span className="text-gray-500">Independence</span><span className="block font-semibold">≥{t.defaultRules.boardIndependence}%</span></div>
-                        <div><span className="text-gray-500">Tenure Limit</span><span className="block font-semibold">{t.defaultRules.tenureConcern} years</span></div>
-                        <div><span className="text-gray-500">PfP Threshold</span><span className="block font-semibold">Grade {t.defaultRules.pfpGrade}+</span></div>
+                        <div><span className="text-dragon-500">Independence</span><span className="block font-semibold">≥{t.defaultRules.boardIndependence}%</span></div>
+                        <div><span className="text-dragon-500">Tenure Limit</span><span className="block font-semibold">{t.defaultRules.tenureConcern} years</span></div>
+                        <div><span className="text-dragon-500">PfP Threshold</span><span className="block font-semibold">Grade {t.defaultRules.pfpGrade}+</span></div>
                       </div>
                     </div>
                   ))}
                   
                   {selectedTemplate && (
-                    <button onClick={() => setStep(2)} className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 flex items-center justify-center gap-2">
+                    <button onClick={() => setStep(2)} className="w-full bg-dragon-700 text-white py-3 px-6 rounded-lg font-medium hover:bg-dragon-800 flex items-center justify-center gap-2">
                       Continue <Icons.ChevronRight className="w-5 h-5" />
                     </button>
                   )}
@@ -332,36 +464,36 @@ We generally defer to management on routine matters while maintaining oversight 
               {step === 2 && (
                 <div className="space-y-6">
                   <div className="flex items-center justify-between mb-4">
-                    <button onClick={() => setStep(1)} className="text-gray-500 hover:text-gray-700 flex items-center gap-1">
+                    <button onClick={() => setStep(1)} className="text-dragon-500 hover:text-dragon-700 flex items-center gap-1">
                       <Icons.ChevronLeft className="w-4 h-4" /> Back
                     </button>
-                    <span className="text-sm text-gray-500">Step 2 of 4</span>
+                    <span className="text-sm text-dragon-500">Step 2 of 4</span>
                   </div>
                   
                   <div className="text-center mb-6">
-                    <h2 className="text-2xl font-bold text-gray-900">Customize Your Policy</h2>
-                    <p className="text-gray-600 mt-2">Edit using natural language. We'll extract the voting rules.</p>
+                    <h2 className="text-2xl font-bold text-dragon-900">Customize Your Policy</h2>
+                    <p className="text-dragon-600 mt-2">Edit using natural language. We'll extract the voting rules.</p>
                   </div>
 
                   <div className="bg-gray-50 rounded-xl p-4 mb-4">
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <div className="flex items-center gap-2 text-sm text-dragon-600">
                       <Icons.Edit className="w-4 h-4" />
                       <span>Based on: <strong>{POLICY_TEMPLATES[selectedTemplate]?.name}</strong></span>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">Try changing "two-thirds" to "eighty percent" or "fifteen years" to "ten years"</p>
+                    <p className="text-xs text-dragon-500 mt-1">Try changing "two-thirds" to "eighty percent" or "fifteen years" to "ten years"</p>
                   </div>
 
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Policy Name</label>
+                    <label className="block text-sm font-medium text-dragon-700 mb-2">Policy Name</label>
                     <input type="text" value={policyName} onChange={e => setPolicyName(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-2 border border-dragon-300 rounded-lg focus:ring-2 focus:ring-dragon-500"
                       placeholder="e.g., ABC Capital Proxy Policy" />
                   </div>
 
                   <textarea value={policyText} onChange={e => setPolicyText(e.target.value)}
-                    className="w-full h-80 p-4 border border-gray-300 rounded-xl text-sm leading-relaxed focus:ring-2 focus:ring-blue-500" />
+                    className="w-full h-80 p-4 border border-dragon-300 rounded-xl text-sm leading-relaxed focus:ring-2 focus:ring-dragon-500" />
 
-                  <button onClick={submitPolicy} className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 flex items-center justify-center gap-2">
+                  <button onClick={submitPolicy} className="w-full bg-dragon-700 text-white py-3 px-6 rounded-lg font-medium hover:bg-dragon-800 flex items-center justify-center gap-2">
                     Translate to Voting Rules <Icons.ChevronRight className="w-5 h-5" />
                   </button>
                 </div>
@@ -371,19 +503,19 @@ We generally defer to management on routine matters while maintaining oversight 
               {step === 3 && rules && (
                 <div className="space-y-6">
                   <div className="flex items-center justify-between mb-4">
-                    <button onClick={() => setStep(2)} className="text-gray-500 hover:text-gray-700 flex items-center gap-1">
+                    <button onClick={() => setStep(2)} className="text-dragon-500 hover:text-dragon-700 flex items-center gap-1">
                       <Icons.ChevronLeft className="w-4 h-4" /> Back
                     </button>
-                    <span className="text-sm text-gray-500">Step 3 of 4</span>
+                    <span className="text-sm text-dragon-500">Step 3 of 4</span>
                   </div>
                   
                   <div className="text-center mb-6">
-                    <h2 className="text-2xl font-bold text-gray-900">Review Extracted Rules</h2>
-                    <p className="text-gray-600 mt-2">Adjust thresholds if needed</p>
+                    <h2 className="text-2xl font-bold text-dragon-900">Review Extracted Rules</h2>
+                    <p className="text-dragon-600 mt-2">Adjust thresholds if needed</p>
                   </div>
 
-                  <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6">
-                    <div className="flex items-center gap-2 text-green-800">
+                  <div className="bg-green-50 border border-dragon-200 rounded-xl p-4 mb-6">
+                    <div className="flex items-center gap-2 text-dragon-800">
                       <Icons.CheckCircle className="w-5 h-5" />
                       <span className="font-medium">Policy parsed successfully</span>
                     </div>
@@ -392,38 +524,38 @@ We generally defer to management on routine matters while maintaining oversight 
                   {/* Board Rules */}
                   <div className="bg-white border rounded-xl p-4">
                     <div className="flex items-center gap-3 mb-4">
-                      <Icons.Users className="w-5 h-5 text-blue-600" />
+                      <Icons.Users className="w-5 h-5 text-dragon-600" />
                       <h3 className="font-semibold">Board Composition</h3>
                     </div>
                     <div className="space-y-4">
                       <div className="flex items-center justify-between py-2 border-b">
                         <div>
                           <span className="text-sm font-medium">Board Independence Minimum</span>
-                          <p className="text-xs text-gray-500">Vote against if below threshold</p>
+                          <p className="text-xs text-dragon-500">Vote against if below threshold</p>
                         </div>
                         <div className="flex items-center gap-2">
                           <input type="range" min="50" max="90" value={rules.boardIndependence} onChange={e => updateRule('boardIndependence', +e.target.value)} className="w-24" />
-                          <span className="w-12 text-right font-semibold text-blue-600">{rules.boardIndependence}%</span>
+                          <span className="w-12 text-right font-semibold text-dragon-600">{rules.boardIndependence}%</span>
                         </div>
                       </div>
                       <div className="flex items-center justify-between py-2 border-b">
                         <div>
                           <span className="text-sm font-medium">Director Tenure Concern</span>
-                          <p className="text-xs text-gray-500">Flag directors exceeding threshold</p>
+                          <p className="text-xs text-dragon-500">Flag directors exceeding threshold</p>
                         </div>
                         <div className="flex items-center gap-2">
                           <input type="range" min="8" max="25" value={rules.tenureConcern} onChange={e => updateRule('tenureConcern', +e.target.value)} className="w-24" />
-                          <span className="w-12 text-right font-semibold text-blue-600">{rules.tenureConcern} yrs</span>
+                          <span className="w-12 text-right font-semibold text-dragon-600">{rules.tenureConcern} yrs</span>
                         </div>
                       </div>
                       <div className="flex items-center justify-between py-2">
                         <div>
                           <span className="text-sm font-medium">Overboarding Limit</span>
-                          <p className="text-xs text-gray-500">Max public boards</p>
+                          <p className="text-xs text-dragon-500">Max public boards</p>
                         </div>
                         <div className="flex items-center gap-2">
                           <input type="range" min="2" max="6" value={rules.overboardingLimit} onChange={e => updateRule('overboardingLimit', +e.target.value)} className="w-24" />
-                          <span className="w-12 text-right font-semibold text-blue-600">{rules.overboardingLimit}</span>
+                          <span className="w-12 text-right font-semibold text-dragon-600">{rules.overboardingLimit}</span>
                         </div>
                       </div>
                     </div>
@@ -432,28 +564,28 @@ We generally defer to management on routine matters while maintaining oversight 
                   {/* Compensation Rules */}
                   <div className="bg-white border rounded-xl p-4">
                     <div className="flex items-center gap-3 mb-4">
-                      <Icons.DollarSign className="w-5 h-5 text-green-600" />
+                      <Icons.DollarSign className="w-5 h-5 text-dragon-600" />
                       <h3 className="font-semibold">Executive Compensation</h3>
                     </div>
                     <div className="space-y-4">
                       <div className="flex items-center justify-between py-2 border-b">
                         <div>
                           <span className="text-sm font-medium">Pay-for-Performance Grade</span>
-                          <p className="text-xs text-gray-500">Vote against SoP if below</p>
+                          <p className="text-xs text-dragon-500">Vote against SoP if below</p>
                         </div>
                         <select value={rules.pfpGrade} onChange={e => updateRule('pfpGrade', e.target.value)}
-                          className="px-3 py-1 border rounded-lg font-semibold text-blue-600">
+                          className="px-3 py-1 border rounded-lg font-semibold text-dragon-600">
                           <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option>
                         </select>
                       </div>
                       <div className="flex items-center justify-between py-2">
                         <div>
                           <span className="text-sm font-medium">Prior SoP Support Threshold</span>
-                          <p className="text-xs text-gray-500">Require response if below</p>
+                          <p className="text-xs text-dragon-500">Require response if below</p>
                         </div>
                         <div className="flex items-center gap-2">
                           <input type="range" min="50" max="85" step="5" value={rules.priorSopThreshold} onChange={e => updateRule('priorSopThreshold', +e.target.value)} className="w-24" />
-                          <span className="w-12 text-right font-semibold text-blue-600">{rules.priorSopThreshold}%</span>
+                          <span className="w-12 text-right font-semibold text-dragon-600">{rules.priorSopThreshold}%</span>
                         </div>
                       </div>
                     </div>
@@ -468,16 +600,16 @@ We generally defer to management on routine matters while maintaining oversight 
                     <div className="flex items-center justify-between py-2">
                       <div>
                         <span className="text-sm font-medium">Non-Audit Fee Ratio Max</span>
-                        <p className="text-xs text-gray-500">Vote against if exceeded</p>
+                        <p className="text-xs text-dragon-500">Vote against if exceeded</p>
                       </div>
                       <div className="flex items-center gap-2">
                         <input type="range" min="15" max="40" step="5" value={rules.nonAuditFeeRatio} onChange={e => updateRule('nonAuditFeeRatio', +e.target.value)} className="w-24" />
-                        <span className="w-12 text-right font-semibold text-blue-600">{rules.nonAuditFeeRatio}%</span>
+                        <span className="w-12 text-right font-semibold text-dragon-600">{rules.nonAuditFeeRatio}%</span>
                       </div>
                     </div>
                   </div>
 
-                  <button onClick={() => setStep(4)} className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 flex items-center justify-center gap-2">
+                  <button onClick={() => setStep(4)} className="w-full bg-dragon-700 text-white py-3 px-6 rounded-lg font-medium hover:bg-dragon-800 flex items-center justify-center gap-2">
                     Continue to Portfolio <Icons.ChevronRight className="w-5 h-5" />
                   </button>
                 </div>
@@ -487,29 +619,29 @@ We generally defer to management on routine matters while maintaining oversight 
               {step === 4 && (
                 <div className="space-y-6">
                   <div className="flex items-center justify-between mb-4">
-                    <button onClick={() => setStep(3)} className="text-gray-500 hover:text-gray-700 flex items-center gap-1">
+                    <button onClick={() => setStep(3)} className="text-dragon-500 hover:text-dragon-700 flex items-center gap-1">
                       <Icons.ChevronLeft className="w-4 h-4" /> Back
                     </button>
-                    <span className="text-sm text-gray-500">Step 4 of 4</span>
+                    <span className="text-sm text-dragon-500">Step 4 of 4</span>
                   </div>
                   
                   <div className="text-center mb-6">
-                    <h2 className="text-2xl font-bold text-gray-900">Upload Your Portfolio</h2>
-                    <p className="text-gray-600 mt-2">Import tickers to monitor for upcoming meetings</p>
+                    <h2 className="text-2xl font-bold text-dragon-900">Upload Your Portfolio</h2>
+                    <p className="text-dragon-600 mt-2">Import tickers to monitor for upcoming meetings</p>
                   </div>
 
-                  <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-blue-400 transition-colors">
+                  <div className="border-2 border-dashed border-dragon-300 rounded-xl p-8 text-center hover:border-blue-400 transition-colors">
                     <input type="file" accept=".csv,.xlsx" onChange={e => setUploadedFile(e.target.files[0])} className="hidden" id="file-upload" />
                     <label htmlFor="file-upload" className="cursor-pointer">
-                      <Icons.Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                      <p className="text-gray-600 font-medium">Drop your portfolio file here or click to browse</p>
-                      <p className="text-sm text-gray-500 mt-2">Accepts CSV or Excel with ticker symbols</p>
+                      <Icons.Upload className="w-12 h-12 text-dragon-400 mx-auto mb-4" />
+                      <p className="text-dragon-600 font-medium">Drop your portfolio file here or click to browse</p>
+                      <p className="text-sm text-dragon-500 mt-2">Accepts CSV or Excel with ticker symbols</p>
                     </label>
                   </div>
 
                   {uploadedFile && (
-                    <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-                      <div className="flex items-center gap-2 text-green-800">
+                    <div className="bg-green-50 border border-dragon-200 rounded-xl p-4">
+                      <div className="flex items-center gap-2 text-dragon-800">
                         <Icons.CheckCircle className="w-5 h-5" />
                         <span className="font-medium">{uploadedFile.name} uploaded</span>
                       </div>
@@ -517,20 +649,20 @@ We generally defer to management on routine matters while maintaining oversight 
                   )}
 
                   <div className="bg-gray-50 rounded-xl p-4">
-                    <h3 className="font-medium text-gray-900 mb-3">Or use demo portfolio</h3>
-                    <p className="text-sm text-gray-600 mb-4">5 companies with upcoming meetings:</p>
+                    <h3 className="font-medium text-dragon-900 mb-3">Or use demo portfolio</h3>
+                    <p className="text-sm text-dragon-600 mb-4">5 companies with upcoming meetings:</p>
                     <div className="space-y-2 text-sm">
                       {PORTFOLIO.map(c => (
                         <div key={c.id} className="flex justify-between">
                           <span className="font-medium">{c.ticker}</span>
-                          <span className="text-gray-500">{c.name}</span>
-                          <span className="text-gray-400">{c.meetingDate}</span>
+                          <span className="text-dragon-500">{c.name}</span>
+                          <span className="text-dragon-400">{c.meetingDate}</span>
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                  <div className="bg-dragon-50 border border-blue-200 rounded-xl p-4">
                     <h3 className="font-semibold text-blue-900 mb-2">Policy Summary</h3>
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div><span className="text-blue-700">Name:</span> <span className="font-medium text-blue-900">{policyName}</span></div>
@@ -538,7 +670,7 @@ We generally defer to management on routine matters while maintaining oversight 
                     </div>
                   </div>
 
-                  <button onClick={completeOnboarding} className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 flex items-center justify-center gap-2">
+                  <button onClick={completeOnboarding} className="w-full bg-dragon-700 text-white py-3 px-6 rounded-lg font-medium hover:bg-dragon-800 flex items-center justify-center gap-2">
                     Complete Setup & Go to Dashboard <Icons.ChevronRight className="w-5 h-5" />
                   </button>
                 </div>
@@ -550,23 +682,23 @@ We generally defer to management on routine matters while maintaining oversight 
 
       // ========== USAGE MODE ==========
       return (
-        <div className="min-h-screen bg-gray-100">
+        <div className="min-h-screen bg-dragon-50">
           {/* Header */}
-          <header className="bg-white border-b sticky top-0 z-10">
+          <header className="bg-white border-b border-dragon-100 sticky top-0 z-10">
             <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <Icons.Vote className="w-6 h-6 text-white" />
+                <div className="w-10 h-10 bg-dragon-800 rounded-lg flex items-center justify-center">
+                  <Icons.Dragon className="w-7 h-7 text-white" />
                 </div>
                 <div>
-                  <h1 className="font-bold text-gray-900">DragonVOTE</h1>
-                  <p className="text-xs text-gray-500">{policyName} • {policyVersion}</p>
+                  <h1 className="font-bold text-dragon-900">Dragon<span className="text-dragon-600">VOTE</span></h1>
+                  <p className="text-xs text-dragon-500">{policyName} • {policyVersion}</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <button className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg"><Icons.Bell className="w-5 h-5" /></button>
-                <button className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg"><Icons.Settings className="w-5 h-5" /></button>
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-medium text-sm">AC</div>
+                <button className="p-2 text-dragon-500 hover:bg-dragon-100 rounded-lg"><Icons.Bell className="w-5 h-5" /></button>
+                <button className="p-2 text-dragon-500 hover:bg-dragon-100 rounded-lg"><Icons.Settings className="w-5 h-5" /></button>
+                <div className="w-8 h-8 bg-dragon-100 rounded-full flex items-center justify-center text-dragon-700 font-medium text-sm">AC</div>
               </div>
             </div>
           </header>
@@ -577,14 +709,14 @@ We generally defer to management on routine matters while maintaining oversight 
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="text-2xl font-bold text-gray-900">Upcoming Meetings</h2>
-                    <p className="text-gray-600">5 meetings requiring attention</p>
+                    <h2 className="text-2xl font-bold text-dragon-900">Upcoming Meetings</h2>
+                    <p className="text-dragon-600">5 meetings requiring attention</p>
                   </div>
                   <div className="flex gap-3">
-                    <button className="px-4 py-2 border rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                    <button className="px-4 py-2 border rounded-lg text-sm font-medium text-dragon-700 hover:bg-dragon-50 flex items-center gap-2">
                       <Icons.Filter className="w-4 h-4" /> Filter
                     </button>
-                    <button className="px-4 py-2 border rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                    <button className="px-4 py-2 border rounded-lg text-sm font-medium text-dragon-700 hover:bg-dragon-50 flex items-center gap-2">
                       <Icons.Download className="w-4 h-4" /> Export
                     </button>
                   </div>
@@ -594,19 +726,19 @@ We generally defer to management on routine matters while maintaining oversight 
                 <div className="grid grid-cols-4 gap-4">
                   <div className="bg-white rounded-xl border p-4">
                     <div className="text-2xl font-bold">5</div>
-                    <div className="text-sm text-gray-500">Total Meetings</div>
+                    <div className="text-sm text-dragon-500">Total Meetings</div>
                   </div>
                   <div className="bg-white rounded-xl border p-4">
-                    <div className="text-2xl font-bold text-green-600">2</div>
-                    <div className="text-sm text-gray-500">Ready for Review</div>
+                    <div className="text-2xl font-bold text-dragon-600">2</div>
+                    <div className="text-sm text-dragon-500">Ready for Review</div>
                   </div>
                   <div className="bg-white rounded-xl border p-4">
                     <div className="text-2xl font-bold text-yellow-600">2</div>
-                    <div className="text-sm text-gray-500">Pending Analysis</div>
+                    <div className="text-sm text-dragon-500">Pending Analysis</div>
                   </div>
                   <div className="bg-white rounded-xl border p-4">
                     <div className="text-2xl font-bold text-red-600">3</div>
-                    <div className="text-sm text-gray-500">Items with Concerns</div>
+                    <div className="text-sm text-dragon-500">Items with Concerns</div>
                   </div>
                 </div>
 
@@ -618,23 +750,23 @@ We generally defer to management on routine matters while maintaining oversight 
                   <div className="divide-y">
                     {PORTFOLIO.map(c => (
                       <div key={c.id} onClick={() => openMeeting(c)}
-                        className={`p-4 flex items-center justify-between ${c.status === 'ready' ? 'hover:bg-blue-50 cursor-pointer' : 'opacity-60'}`}>
+                        className={`p-4 flex items-center justify-between ${c.status === 'ready' ? 'hover:bg-dragon-50 cursor-pointer' : 'opacity-60'}`}>
                         <div className="flex items-center gap-4">
-                          <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${c.status === 'ready' ? 'bg-green-100' : c.status === 'pending' ? 'bg-yellow-100' : 'bg-gray-100'}`}>
-                            <Icons.Calendar className={`w-6 h-6 ${c.status === 'ready' ? 'text-green-600' : c.status === 'pending' ? 'text-yellow-600' : 'text-gray-400'}`} />
+                          <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${c.status === 'ready' ? 'bg-dragon-100' : c.status === 'pending' ? 'bg-yellow-100' : 'bg-dragon-50'}`}>
+                            <Icons.Calendar className={`w-6 h-6 ${c.status === 'ready' ? 'text-dragon-600' : c.status === 'pending' ? 'text-yellow-600' : 'text-dragon-400'}`} />
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
                               <span className="font-semibold">{c.name}</span>
-                              <span className="text-sm text-gray-500">({c.ticker})</span>
+                              <span className="text-sm text-dragon-500">({c.ticker})</span>
                             </div>
-                            <div className="text-sm text-gray-500">{c.sector} • {c.exchange}</div>
+                            <div className="text-sm text-dragon-500">{c.sector} • {c.exchange}</div>
                           </div>
                         </div>
                         <div className="flex items-center gap-6">
                           <div className="text-right">
                             <div className="text-sm font-medium">{c.meetingDate}</div>
-                            <div className="text-xs text-gray-500">Vote by {c.voteDeadline}</div>
+                            <div className="text-xs text-dragon-500">Vote by {c.voteDeadline}</div>
                           </div>
                           <div className="text-right min-w-[100px]">
                             {c.status === 'ready' && (
@@ -649,12 +781,12 @@ We generally defer to management on routine matters while maintaining oversight 
                               </>
                             )}
                             {c.status === 'pending' && <span className="text-sm text-yellow-600">Pending</span>}
-                            {c.status === 'not_filed' && <span className="text-sm text-gray-400">Awaiting Filing</span>}
+                            {c.status === 'not_filed' && <span className="text-sm text-dragon-400">Awaiting Filing</span>}
                           </div>
-                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${c.status === 'ready' ? 'bg-green-100 text-green-800' : c.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-600'}`}>
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${c.status === 'ready' ? 'bg-dragon-100 text-dragon-800' : c.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-dragon-50 text-dragon-600'}`}>
                             {c.status === 'ready' ? 'Ready' : c.status === 'pending' ? 'Pending' : 'Awaiting'}
                           </span>
-                          {c.status === 'ready' && <Icons.ChevronRight className="w-5 h-5 text-gray-400" />}
+                          {c.status === 'ready' && <Icons.ChevronRight className="w-5 h-5 text-dragon-400" />}
                         </div>
                       </div>
                     ))}
@@ -667,10 +799,10 @@ We generally defer to management on routine matters while maintaining oversight 
             {selectedCompany && proposals.length > 0 && (
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
-                  <button onClick={closeMeeting} className="text-gray-500 hover:text-gray-700 flex items-center gap-1">
+                  <button onClick={closeMeeting} className="text-dragon-500 hover:text-dragon-700 flex items-center gap-1">
                     <Icons.ChevronLeft className="w-4 h-4" /> Back to Dashboard
                   </button>
-                  <span className="text-sm text-gray-500">Proposal {currentProposal + 1} of {proposals.length}</span>
+                  <span className="text-sm text-dragon-500">Proposal {currentProposal + 1} of {proposals.length}</span>
                 </div>
 
                 {/* Company Header */}
@@ -690,10 +822,10 @@ We generally defer to management on routine matters while maintaining oversight 
                     </div>
                   </div>
                   {/* Progress dots */}
-                  <div className="flex items-center gap-2 mt-6 pt-4 border-t border-blue-600">
+                  <div className="flex items-center gap-2 mt-6 pt-4 border-t border-dragon-700">
                     {proposals.map((p, i) => (
                       <button key={p.id} onClick={() => setCurrentProposal(i)}
-                        className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium transition-all ${i === currentProposal ? 'bg-white text-blue-900' : p.hasIssues ? 'bg-red-500 text-white' : 'bg-blue-600 text-blue-200 hover:bg-blue-500'}`}>
+                        className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium transition-all ${i === currentProposal ? 'bg-white text-blue-900' : p.hasIssues ? 'bg-red-500 text-white' : 'bg-dragon-700 text-blue-200 hover:bg-dragon-600'}`}>
                         {i + 1}
                       </button>
                     ))}
@@ -708,17 +840,17 @@ We generally defer to management on routine matters while maintaining oversight 
                       <div className="px-6 py-4 border-b bg-gray-50">
                         <div className="flex justify-between items-center">
                           <div>
-                            <div className="text-sm text-gray-500">Proposal {p.id}</div>
+                            <div className="text-sm text-dragon-500">Proposal {p.id}</div>
                             <h2 className="text-xl font-semibold">{p.matter}</h2>
                           </div>
                           <div className="flex gap-6">
                             <div className="text-right">
-                              <div className="text-xs text-gray-500">Board</div>
+                              <div className="text-xs text-dragon-500">Board</div>
                               <div className="font-medium">{p.board}</div>
                             </div>
                             <div className="text-right">
-                              <div className="text-xs text-gray-500">DragonVOTE</div>
-                              <div className={`font-semibold ${p.recommendation === 'FOR' || p.recommendation === '1 YEAR' ? 'text-green-600' : p.recommendation === 'AGAINST' ? 'text-red-600' : 'text-yellow-600'}`}>
+                              <div className="text-xs text-dragon-500">DragonVOTE</div>
+                              <div className={`font-semibold ${p.recommendation === 'FOR' || p.recommendation === '1 YEAR' ? 'text-dragon-600' : p.recommendation === 'AGAINST' ? 'text-red-600' : 'text-yellow-600'}`}>
                                 {p.recommendation}
                               </div>
                             </div>
@@ -730,17 +862,17 @@ We generally defer to management on routine matters while maintaining oversight 
                         {/* Directors */}
                         {p.type === 'directors' && p.directors && (
                           <div className="space-y-3">
-                            <div className="text-sm text-gray-600 mb-4">{p.summary}</div>
+                            <div className="text-sm text-dragon-600 mb-4">{p.summary}</div>
                             {p.directors.map((d, i) => (
                               <div key={i} className={`p-4 rounded-lg border ${d.issues.length > 0 ? 'border-red-200 bg-red-50' : 'border-gray-100 bg-gray-50'}`}>
                                 <div className="flex justify-between items-start">
                                   <div className="flex-1">
                                     <div className="flex items-center gap-2">
                                       <span className="font-medium">{d.name}</span>
-                                      {d.role && <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">{d.role}</span>}
-                                      {!d.independent && <span className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded">Non-Ind</span>}
+                                      {d.role && <span className="text-xs bg-blue-100 text-dragon-800 px-2 py-0.5 rounded">{d.role}</span>}
+                                      {!d.independent && <span className="text-xs bg-dragon-200 text-dragon-600 px-2 py-0.5 rounded">Non-Ind</span>}
                                     </div>
-                                    <div className="text-sm text-gray-500 mt-1">
+                                    <div className="text-sm text-dragon-500 mt-1">
                                       Age {d.age} • {d.tenure}yr tenure • {d.otherBoards} other boards
                                     </div>
                                     {d.issues.length > 0 && (
@@ -761,11 +893,11 @@ We generally defer to management on routine matters while maintaining oversight 
                                   </div>
                                   <div className="flex gap-2 ml-4">
                                     <button onClick={() => setVote(`${p.id}-${d.name}`, 'FOR')}
-                                      className={`px-4 py-2 rounded-lg text-sm font-medium ${votes[`${p.id}-${d.name}`] === 'FOR' ? 'bg-green-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}>
+                                      className={`px-4 py-2 rounded-lg text-sm font-medium ${votes[`${p.id}-${d.name}`] === 'FOR' ? 'bg-green-600 text-white' : 'bg-dragon-50 hover:bg-dragon-200'}`}>
                                       FOR
                                     </button>
                                     <button onClick={() => setVote(`${p.id}-${d.name}`, 'AGAINST')}
-                                      className={`px-4 py-2 rounded-lg text-sm font-medium ${votes[`${p.id}-${d.name}`] === 'AGAINST' ? 'bg-red-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}>
+                                      className={`px-4 py-2 rounded-lg text-sm font-medium ${votes[`${p.id}-${d.name}`] === 'AGAINST' ? 'bg-red-600 text-white' : 'bg-dragon-50 hover:bg-dragon-200'}`}>
                                       AGAINST
                                     </button>
                                   </div>
@@ -780,8 +912,8 @@ We generally defer to management on routine matters while maintaining oversight 
                           <div className="space-y-4">
                             {p.rationale && (
                               <div className="bg-gray-50 rounded-lg p-4">
-                                <h4 className="text-sm font-semibold text-gray-700 mb-2">Analysis</h4>
-                                <p className="text-sm text-gray-600">{p.rationale}</p>
+                                <h4 className="text-sm font-semibold text-dragon-700 mb-2">Analysis</h4>
+                                <p className="text-sm text-dragon-600">{p.rationale}</p>
                               </div>
                             )}
                             {p.issues?.length > 0 && (
@@ -801,22 +933,22 @@ We generally defer to management on routine matters while maintaining oversight 
                                 {p.type === 'frequency' ? (
                                   ['1 YEAR', '2 YEARS', '3 YEARS'].map(opt => (
                                     <button key={opt} onClick={() => setVote(p.id, opt)}
-                                      className={`px-4 py-2 rounded-lg text-sm font-medium ${votes[p.id] === opt ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}>
+                                      className={`px-4 py-2 rounded-lg text-sm font-medium ${votes[p.id] === opt ? 'bg-dragon-700 text-white' : 'bg-dragon-50 hover:bg-dragon-200'}`}>
                                       {opt}
                                     </button>
                                   ))
                                 ) : (
                                   <>
                                     <button onClick={() => setVote(p.id, 'FOR')}
-                                      className={`px-6 py-2 rounded-lg text-sm font-medium ${votes[p.id] === 'FOR' ? 'bg-green-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}>
+                                      className={`px-6 py-2 rounded-lg text-sm font-medium ${votes[p.id] === 'FOR' ? 'bg-green-600 text-white' : 'bg-dragon-50 hover:bg-dragon-200'}`}>
                                       FOR
                                     </button>
                                     <button onClick={() => setVote(p.id, 'AGAINST')}
-                                      className={`px-6 py-2 rounded-lg text-sm font-medium ${votes[p.id] === 'AGAINST' ? 'bg-red-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}>
+                                      className={`px-6 py-2 rounded-lg text-sm font-medium ${votes[p.id] === 'AGAINST' ? 'bg-red-600 text-white' : 'bg-dragon-50 hover:bg-dragon-200'}`}>
                                       AGAINST
                                     </button>
                                     <button onClick={() => setVote(p.id, 'ABSTAIN')}
-                                      className={`px-6 py-2 rounded-lg text-sm font-medium ${votes[p.id] === 'ABSTAIN' ? 'bg-gray-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}>
+                                      className={`px-6 py-2 rounded-lg text-sm font-medium ${votes[p.id] === 'ABSTAIN' ? 'bg-gray-600 text-white' : 'bg-dragon-50 hover:bg-dragon-200'}`}>
                                       ABSTAIN
                                     </button>
                                   </>
@@ -827,7 +959,7 @@ We generally defer to management on routine matters while maintaining oversight 
                         )}
                       </div>
 
-                      <div className="px-6 py-3 bg-gray-50 border-t text-xs text-gray-500 flex justify-between">
+                      <div className="px-6 py-3 bg-gray-50 border-t text-xs text-dragon-500 flex justify-between">
                         <span>Policy: {policyName} {policyVersion}</span>
                         <span>Generated: {new Date().toISOString()}</span>
                       </div>
@@ -838,20 +970,20 @@ We generally defer to management on routine matters while maintaining oversight 
                 {/* Navigation */}
                 <div className="flex justify-between">
                   <button onClick={() => setCurrentProposal(i => Math.max(0, i - 1))} disabled={currentProposal === 0}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium ${currentProposal === 0 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-gray-200 hover:bg-gray-300'}`}>
+                    className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium ${currentProposal === 0 ? 'bg-dragon-50 text-dragon-400 cursor-not-allowed' : 'bg-dragon-200 hover:bg-gray-300'}`}>
                     <Icons.ArrowLeft className="w-5 h-5" /> Previous
                   </button>
                   <div className="flex gap-3">
-                    <button className="px-6 py-3 border rounded-lg font-medium hover:bg-gray-50 flex items-center gap-2">
+                    <button className="px-6 py-3 border rounded-lg font-medium hover:bg-dragon-50 flex items-center gap-2">
                       <Icons.FileText className="w-5 h-5" /> Export Report
                     </button>
-                    <button className="px-6 py-3 border rounded-lg font-medium hover:bg-gray-50 flex items-center gap-2">
+                    <button className="px-6 py-3 border rounded-lg font-medium hover:bg-dragon-50 flex items-center gap-2">
                       <Icons.Download className="w-5 h-5" /> Vote Instructions
                     </button>
                   </div>
                   {currentProposal < proposals.length - 1 ? (
                     <button onClick={() => setCurrentProposal(i => i + 1)}
-                      className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700">
+                      className="flex items-center gap-2 px-6 py-3 bg-dragon-700 text-white rounded-lg font-medium hover:bg-dragon-800">
                       Next <Icons.ArrowRight className="w-5 h-5" />
                     </button>
                   ) : (
