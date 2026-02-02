@@ -1,1012 +1,225 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script>
-    if (sessionStorage.getItem("ok") !== "1") {
-      window.location.href = "/";
-    }
-  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DragonVOTE - Principles-Based Proxy Voting</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            dragon: {
-              50: '#f0f7f7',
-              100: '#d9ebeb',
-              200: '#b3d7d7',
-              300: '#8dc3c3',
-              400: '#5a9e9e',
-              500: '#3d7a7a',
-              600: '#2d5c5c',
-              700: '#1f4545',
-              800: '#1a3a3a',
-              900: '#14302f',
-              950: '#0d1f1f',
-            }
-          }
-        }
-      }
-    }
-  </script>
+  <script>tailwind.config={theme:{extend:{colors:{dragon:{50:'#f0f7f7',100:'#d9ebeb',200:'#b3d7d7',300:'#8dc3c3',400:'#5a9e9e',500:'#3d7a7a',600:'#2d5c5c',700:'#1f4545',800:'#1a3a3a',900:'#14302f'}}}}}</script>
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <style>
-    .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-    body { font-family: system-ui, -apple-system, sans-serif; }
-  </style>
 </head>
-<body class="bg-dragon-50">
-  <div id="root"></div>
+<body class="bg-dragon-50 font-sans">
+<div id="root"></div>
+<script type="text/babel">
+const {useState}=React;
+const I={ChevronRight:({c})=><svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7"/></svg>,ChevronLeft:({c})=><svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7"/></svg>,Check:({c})=><svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"/></svg>,Alert:({c})=><svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>,CheckCircle:({c})=><svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>,Calendar:({c})=><svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>,Upload:({c})=><svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>,Download:({c})=><svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>,ArrowRight:({c})=><svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>,ArrowLeft:({c})=><svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>,Info:({c})=><svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>,Settings:({c})=><svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>,Bell:({c})=><svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>,Filter:({c})=><svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>,Dragon:({c})=><svg className={c} viewBox="0 0 100 80" fill="currentColor"><path d="M85 15c-5-8-15-12-25-10-3-4-8-5-13-3-8-4-18-2-24 5-10 2-18 10-20 20-3 8 0 17 7 22l5 3c-2 5-1 11 3 15 5 5 13 6 19 2l8 6c8 5 19 3 25-5 4-5 5-12 3-18 8-5 13-15 12-25 0-5-1-9-3-12h3zm-50 45c-3 0-5-2-5-5s2-5 5-5 5 2 5 5-2 5-5 5z"/></svg>};
+
+// EXPANDED SAMPLE DATA (from Glass Lewis report)
+const SAMPLE={
+  id:'sampl',name:'Sample Company Inc.',ticker:'SAMPL',exchange:'NASDAQ',isin:'USQIC1234567',
+  meetingDate:'March 23, 2025',recordDate:'March 3, 2025',publishDate:'February 16, 2025',voteDeadline:'March 21, 2025',
+  description:'Sample Company Inc. designs, manufactures, and markets consumer electronics, computer software, and online services worldwide.',
+  sector:'Information Technology',industry:'Technology Hardware, Storage & Peripherals',
+  stateOfIncorporation:'Delaware',headquarters:'California',
+  indexMembership:['DOW JONES','NASDAQ COMPOSITE','S&P 500','NASDAQ-100','RUSSELL 1000'],
+  marketCap:2518523,enterpriseValue:2826357,revenue:384338,sharesOutstanding:15821.9,
+  tsr1yr:3.1,tsr3yr:40.4,tsr5yr:32.1,
+  shareClass:'Common Stock',votesPerShare:1,insideOwnership:0.10,strategicOwners:5.80,freeFloat:99.90,
+  boardIndependence:89,electionMethod:'Majority',controlledCompany:false,multiClassVoting:false,
+  staggeredBoard:false,combinedChairCEO:false,allowsProxyAccess:true,virtualOnlyMeeting:true,
+  poisonPill:false,avgNEDTenure:11,genderDiversity:33.3,ethnicDiversity:33.3,
+  specialMeetingThreshold:10.0,writtenConsentThreshold:50.0,
+  topShareholders:[
+    {name:'The Vanguard Group, Inc.',pct:9.00,country:'United States',type:'Traditional Investment Manager'},
+    {name:'BlackRock, Inc.',pct:5.25,country:'United States',type:'Traditional Investment Manager'},
+    {name:'Berkshire Hathaway Inc.',pct:4.76,country:'United States',type:'Public Company'},
+    {name:'State Street Global Advisors',pct:4.54,country:'United States',type:'Traditional Investment Manager'},
+    {name:'FMR LLC',pct:2.16,country:'United States',type:'Traditional Investment Manager'},
+    {name:'Geode Capital Management',pct:1.87,country:'United States',type:'Traditional Investment Manager'},
+    {name:'T. Rowe Price Group',pct:1.42,country:'United States',type:'Traditional Investment Manager'},
+    {name:'Northern Trust Global',pct:1.11,country:'United Kingdom',type:'Traditional Investment Manager'},
+    {name:'Norges Bank Investment',pct:1.04,country:'Norway',type:'Government Pension Plan'},
+    {name:'BNY Mellon Asset Mgmt',pct:0.86,country:'United States',type:'Traditional Investment Manager'},
+  ],
+  directors:[
+    {name:'Charlene M. Jameson',age:55,gender:'F',diverse:false,independent:false,tenure:8,committees:['CEO'],otherBoards:1,otherBoardNames:['Associated British Foods'],role:'CEO',attendance:true},
+    {name:'Gary J. Albert',age:72,gender:'M',diverse:false,independent:true,tenure:19,committees:['Audit (Chair)'],otherBoards:0,otherBoardNames:[],attendance:true},
+    {name:'Jacintha Andrews',age:61,gender:'F',diverse:false,independent:true,tenure:14,committees:['Comp (Chair)'],otherBoards:1,otherBoardNames:['Genus plc'],attendance:true},
+    {name:'Levi S. Artur',age:62,gender:'M',diverse:false,independent:true,tenure:21,committees:['Gov (Chair)'],otherBoards:0,otherBoardNames:[],role:'Chair',attendance:true},
+    {name:'Ragnar S. Didrikson',age:71,gender:'M',diverse:false,independent:true,tenure:12,committees:['Audit'],otherBoards:1,otherBoardNames:['Unilever plc'],attendance:true},
+    {name:'Alexis Gorman',age:58,gender:'M',diverse:false,independent:true,tenure:2,committees:['Nom (Chair)'],otherBoards:0,otherBoardNames:[],attendance:true},
+    {name:'Sarah W. Loris',age:64,gender:'F',diverse:false,independent:true,tenure:9,committees:['Audit','Nom'],otherBoards:1,otherBoardNames:['Credit Suisse'],attendance:true},
+    {name:'Jennifer C. Ribeiro',age:76,gender:'F',diverse:true,independent:true,tenure:4,committees:['Audit'],otherBoards:1,otherBoardNames:['HSBC Holdings'],attendance:true},
+    {name:'Boris A. Ring',age:64,gender:'M',diverse:true,independent:true,tenure:7,committees:[],otherBoards:1,otherBoardNames:['Informa plc'],attendance:true}
+  ],
+  compensation:{
+    ceoName:'Charlene M. Jameson',ceoStartDate:'August 2015',
+    totalComp:19420097,salary:3000000,bonus:12000000,equity:3000015,other:1420082,
+    pfpGrade:'D',pfpGradeHistory:{2024:'D',2023:'C',2022:'B'},
+    priorSopSupport:64,yoyChange:1,ceoToMedianRatio:1177,
+    structureRating:'Fair',disclosureRating:'Fair',
+    clawbackPolicy:true,clawbackExpanded:true,antiHedgingPolicy:true,stockOwnershipGuidelines:true,
+    singleTriggerCIC:false,exciseTaxGrossUps:false,cicEquityTreatment:'Double-trigger acceleration',
+  },
+  auditor:{
+    name:'PricewaterhouseCoopers LLP',tenure:14,opinion:'Unqualified',priorYearVote:98.5,
+    leadPartner:'Ash K. Frank',restatement:false,materialWeakness:false,
+    fees:{audit:18763884,auditRelated:1581423,tax:3489482,other:142510,total:23977299},
+    priorFees:{audit:16883123,auditRelated:1361408,tax:4762997,other:625310,total:23632838},
+    feeChange1yr:1.5
+  },
+  priorVoteResults:[
+    {proposal:'Elect Charlene Jameson',forPct:98.87},{proposal:'Elect Boris Ring',forPct:97.97},
+    {proposal:'Elect Gary Albert',forPct:91.41},{proposal:'Elect Alexis Gorman',forPct:92.29},
+    {proposal:'Elect Jacintha Andrews',forPct:88.93},{proposal:'Elect Levi Artur',forPct:92.47},
+    {proposal:'Elect Jennifer Ribeiro',forPct:98.93},{proposal:'Elect Ragnar Didrikson',forPct:88.79},
+    {proposal:'Elect Sarah Loris',forPct:96.33},{proposal:'Ratification of Auditor',forPct:98.55},
+    {proposal:'Advisory Vote on Executive Compensation',forPct:64.02},
+    {proposal:'SH Proposal: Civil Rights Audit',forPct:53.55},{proposal:'SH Proposal: Concealment Clauses',forPct:50.04},
+  ],
+  engagement:{hasConflicts:false,conflictsNote:'None. DragonVOTE does not provide advisory services to issuers.'},
+  status:'ready'
+};
+
+const TEMPLATES={
+  shareholderValue:{id:'shareholderValue',name:'Shareholder Value Focus',shortDesc:'Balanced approach prioritizing long-term returns',
+    text:`We vote proxies in the best interest of our clients with a focus on long-term shareholder value. We believe boards should be substantially independent with at least two-thirds of directors meeting independence standards. We are concerned when directors have served for more than fifteen years. Directors should not serve on more than four public company boards.\n\nWe expect executive compensation aligned with company performance. We will vote against say-on-pay when pay-for-performance alignment is poor or when companies fail to respond to prior votes receiving less than seventy percent support.\n\nWe support annual say-on-pay votes and expect auditors to maintain independence with non-audit fees not exceeding twenty-five percent of total fees.`,
+    defaultRules:{boardIndependence:67,tenureConcern:15,overboardingLimit:4,pfpGrade:'C',priorSopThreshold:70,nonAuditFeeRatio:25}},
+  governanceLeader:{id:'governanceLeader',name:'Governance Leader',shortDesc:'Rigorous standards for board excellence',
+    text:`We hold boards to a high standard, requiring at least seventy-five percent independence and tenure limits of twelve years. Directors should limit outside commitments to three public boards.\n\nOn compensation, we oppose say-on-pay when the pay-for-performance grade falls below B or when prior support was below eighty percent without remediation.\n\nWe actively support shareholder proposals that enhance governance. We require auditors to maintain strict independence with non-audit fees not exceeding twenty percent of total fees.`,
+    defaultRules:{boardIndependence:75,tenureConcern:12,overboardingLimit:3,pfpGrade:'B',priorSopThreshold:80,nonAuditFeeRatio:20}},
+  balancedStewardship:{id:'balancedStewardship',name:'Balanced Stewardship',shortDesc:'Pragmatic approach with management deference',
+    text:`We balance shareholder interests with practical business considerations. We expect a majority of the board to be independent and become concerned when tenure exceeds twenty years. Directors may serve on up to five public boards.\n\nWe vote against say-on-pay only when pay-for-performance is significantly misaligned (grade D or F) or when companies ignore feedback after votes below sixty percent support.\n\nWe support annual say-on-pay and standard auditor independence thresholds of thirty percent for non-audit fees.`,
+    defaultRules:{boardIndependence:50,tenureConcern:20,overboardingLimit:5,pfpGrade:'D',priorSopThreshold:60,nonAuditFeeRatio:30}}
+};
+
+const PORTFOLIO=[
+  {...SAMPLE,proposalCount:9,concernCount:3},
+  {id:'apex',name:'Apex Technologies Corp.',ticker:'APEX',exchange:'NYSE',meetingDate:'March 28, 2025',voteDeadline:'March 26, 2025',sector:'Software',status:'ready',proposalCount:4,concernCount:1},
+  {id:'sumf',name:'Summit Financial Group',ticker:'SUMF',exchange:'NYSE',meetingDate:'April 5, 2025',voteDeadline:'April 3, 2025',sector:'Financials',status:'pending',proposalCount:6,concernCount:0},
+  {id:'prhl',name:'Pacific Retail Holdings',ticker:'PRHL',exchange:'NASDAQ',meetingDate:'April 12, 2025',voteDeadline:'April 10, 2025',sector:'Consumer',status:'pending',proposalCount:5,concernCount:2},
+  {id:'nrgy',name:'Northern Energy Partners',ticker:'NRGY',exchange:'NYSE',meetingDate:'April 18, 2025',voteDeadline:'April 16, 2025',sector:'Energy',status:'not_filed'}
+];
+
+const fmt=(n)=>{if(n>=1e9)return'$'+(n/1e9).toFixed(1)+'B';if(n>=1e6)return'$'+(n/1e6).toFixed(1)+'M';if(n>=1e3)return'$'+(n/1e3).toFixed(0)+'K';return'$'+n.toLocaleString();};
+const numWords={'fifty':50,'sixty':60,'two-thirds':67,'seventy':70,'seventy-five':75,'eighty':80,'majority':50,'ten':10,'twelve':12,'fifteen':15,'twenty':20,'twenty-five':25,'thirty':30,'three':3,'four':4,'five':5};
+const parsePolicy=(text)=>{
+  const r={boardIndependence:67,tenureConcern:15,overboardingLimit:4,pfpGrade:'C',priorSopThreshold:70,nonAuditFeeRatio:25};
+  const im=text.match(/(?:at least |requiring )?([\w-]+)(?:\s*percent| percent)/i);if(im&&numWords[im[1].toLowerCase()])r.boardIndependence=numWords[im[1].toLowerCase()];
+  const tm=text.match(/(?:more than|exceeds?|limits? of)\s*([\w-]+)\s*years/i);if(tm&&numWords[tm[1].toLowerCase()])r.tenureConcern=numWords[tm[1].toLowerCase()];
+  const bm=text.match(/(?:more than|up to)\s*([\w-]+)\s*(?:public\s*)?boards/i);if(bm&&numWords[bm[1].toLowerCase()])r.overboardingLimit=numWords[bm[1].toLowerCase()];
+  if(text.includes('grade of D or F')||text.includes('significantly misaligned'))r.pfpGrade='D';else if(text.includes('falls below B'))r.pfpGrade='B';else if(text.includes('poor'))r.pfpGrade='C';
+  const sm=text.match(/(?:less than|below)\s*([\w-]+)\s*percent\s*support/i);if(sm&&numWords[sm[1].toLowerCase()])r.priorSopThreshold=numWords[sm[1].toLowerCase()];
+  const fm=text.match(/non-audit fees[^.]*?([\w-]+)\s*percent/i);if(fm&&numWords[fm[1].toLowerCase()])r.nonAuditFeeRatio=numWords[fm[1].toLowerCase()];
+  return r;
+};
+
+const genProposals=(co,rules)=>{
+  const go=['A','B','C','D','F'];
+  const dr=co.directors.map(d=>{
+    const iss=[];
+    if(d.tenure>rules.tenureConcern)iss.push({rule:'Tenure',fact:`${d.tenure}yr`,th:`>${rules.tenureConcern}yr`});
+    if(d.otherBoards+1>rules.overboardingLimit)iss.push({rule:'Overboarding',fact:`${d.otherBoards+1}`,th:`>${rules.overboardingLimit}`});
+    if(d.committees.some(c=>c.includes('Comp'))&&co.compensation.priorSopSupport<rules.priorSopThreshold)iss.push({rule:'Comp Chair',fact:`${co.compensation.priorSopSupport}%`,th:`<${rules.priorSopThreshold}%`});
+    return{...d,issues:iss,rec:iss.length>0?'AGAINST':'FOR'};
+  });
+  const nar=((co.auditor.fees.auditRelated+co.auditor.fees.tax+co.auditor.fees.other)/co.auditor.fees.total*100).toFixed(1);
+  return[
+    {id:'1.00',matter:'Election of Directors',type:'directors',board:'FOR',rec:dr.some(d=>d.rec==='AGAINST')?'MIXED':'FOR',directors:dr,hasIssues:dr.some(d=>d.issues.length>0)},
+    {id:'2.00',matter:'Ratification of Auditor',type:'auditor',board:'FOR',rec:parseFloat(nar)>rules.nonAuditFeeRatio?'AGAINST':'FOR',hasIssues:parseFloat(nar)>rules.nonAuditFeeRatio,issues:parseFloat(nar)>rules.nonAuditFeeRatio?[{rule:'Non-Audit Fees',fact:`${nar}%`,th:`>${rules.nonAuditFeeRatio}%`}]:[],rationale:`${co.auditor.name} - Tenure: ${co.auditor.tenure}yr. Non-audit: ${nar}%. Prior vote: ${co.auditor.priorYearVote}%.`},
+    {id:'3.00',matter:'Advisory Vote on Executive Compensation',type:'sop',board:'FOR',rec:(go.indexOf(co.compensation.pfpGrade)>go.indexOf(rules.pfpGrade)||co.compensation.priorSopSupport<rules.priorSopThreshold)?'AGAINST':'FOR',hasIssues:go.indexOf(co.compensation.pfpGrade)>go.indexOf(rules.pfpGrade)||co.compensation.priorSopSupport<rules.priorSopThreshold,issues:[...(go.indexOf(co.compensation.pfpGrade)>go.indexOf(rules.pfpGrade)?[{rule:'PfP Grade',fact:co.compensation.pfpGrade,th:`<${rules.pfpGrade}`}]:[]),...(co.compensation.priorSopSupport<rules.priorSopThreshold?[{rule:'Prior SoP',fact:`${co.compensation.priorSopSupport}%`,th:`<${rules.priorSopThreshold}%`}]:[])],rationale:`CEO Comp: ${fmt(co.compensation.totalComp)}. PfP Grade: ${co.compensation.pfpGrade}. Prior SoP: ${co.compensation.priorSopSupport}%.`},
+    {id:'4.00',matter:'Say-on-Pay Frequency',type:'frequency',board:'1 YEAR',rec:'1 YEAR',hasIssues:false,issues:[],rationale:'Annual say-on-pay votes ensure ongoing shareholder oversight.'},
+    {id:'5.00',matter:'SH Proposal: Proxy Access Amendment',type:'shareholder',board:'AGAINST',rec:'FOR',hasIssues:false,issues:[],proponent:'James McRitchie',rationale:'Proxy access enhances shareholder rights.',boardPerspective:'Current provisions are sufficient.',proponentPerspective:'Allow at least two nominees.'},
+    {id:'6.00',matter:'SH Proposal: Director Golden Parachutes',type:'shareholder',board:'AGAINST',rec:'FOR',hasIssues:false,issues:[],proponent:'John Chevedden',rationale:'Golden parachutes for directors are not aligned with shareholder interests.'},
+    {id:'7.00',matter:'Increase Authorized Shares',type:'capital',board:'FOR',rec:'AGAINST',hasIssues:true,issues:[{rule:'Dilution',fact:'100% increase',th:'Excessive'}],rationale:'Would double authorized shares without stated purpose.'},
+    {id:'8.00',matter:'Approve By-law Amendment',type:'bylaw',board:'FOR',rec:'AGAINST',hasIssues:true,issues:[{rule:'Advance Notice',fact:'120 days',th:'Excessive barrier'}],rationale:'Extends advance notice period creating unreasonable barrier.'},
+    {id:'9.00',matter:'Reincorporation to Nevada',type:'reincorp',board:'FOR',rec:'FOR',hasIssues:false,issues:[],rationale:'Nevada law provides reasonable flexibility with adequate protections.'}
+  ];
+};
+
+function App(){
+  const[mode,setMode]=useState('landing');
+  const[step,setStep]=useState(1);
+  const[selectedTemplate,setSelectedTemplate]=useState(null);
+  const[policyText,setPolicyText]=useState('');
+  const[policyName,setPolicyName]=useState('');
+  const[clientName,setClientName]=useState('ABC Investment Manager');
+  const[rules,setRules]=useState(null);
+  const[selectedCompany,setSelectedCompany]=useState(null);
+  const[proposals,setProposals]=useState([]);
+  const[currentProposal,setCurrentProposal]=useState(0);
+  const[votes,setVotes]=useState({});
+  const[activeTab,setActiveTab]=useState('proposals');
   
-  <script type="text/babel">
-    const { useState } = React;
+  const selectTemplate=(id)=>{setSelectedTemplate(id);setPolicyText(TEMPLATES[id].text);setPolicyName(TEMPLATES[id].name);};
+  const submitPolicy=()=>{setRules(parsePolicy(policyText));setStep(3);};
+  const updateRule=(k,v)=>setRules(r=>({...r,[k]:v}));
+  const completeOnboarding=()=>setMode('usage');
+  const openMeeting=(co)=>{if(co.status!=='ready')return;const fc=co.id==='sampl'?SAMPLE:co;setSelectedCompany(fc);const ps=co.id==='sampl'?genProposals(fc,rules):[{id:'1.00',matter:'Election of Directors',type:'directors',board:'FOR',rec:'FOR',hasIssues:false}];setProposals(ps);setCurrentProposal(0);setActiveTab('proposals');const v={};ps.forEach(p=>{if(p.directors)p.directors.forEach(d=>v[`${p.id}-${d.name}`]=d.rec);else v[p.id]=p.rec;});setVotes(v);};
+  const closeMeeting=()=>{setSelectedCompany(null);setProposals([]);};
+  const setVote=(k,v)=>setVotes(vs=>({...vs,[k]:v}));
 
-    // ==================== ICONS ====================
-    const Icons = {
-      ChevronRight: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7"/></svg>,
-      ChevronLeft: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7"/></svg>,
-      Check: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"/></svg>,
-      AlertTriangle: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>,
-      CheckCircle: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>,
-      XCircle: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>,
-      Calendar: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>,
-      Upload: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>,
-      Download: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>,
-      FileText: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>,
-      ArrowRight: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>,
-      ArrowLeft: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>,
-      Users: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>,
-      DollarSign: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>,
-      Scale: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>,
-      Building: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>,
-      Vote: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>,
-      Settings: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>,
-      Bell: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>,
-      Filter: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>,
-      Edit: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>,
-      Dragon: ({className}) => <svg className={className} viewBox="0 0 100 80" fill="currentColor"><path d="M85 15c-5-8-15-12-25-10-3-4-8-5-13-3-8-4-18-2-24 5-10 2-18 10-20 20-3 8 0 17 7 22l5 3c-2 5-1 11 3 15 5 5 13 6 19 2l8 6c8 5 19 3 25-5 4-5 5-12 3-18 8-5 13-15 12-25 0-5-1-9-3-12h3zm-50 45c-3 0-5-2-5-5s2-5 5-5 5 2 5 5-2 5-5 5z"/></svg>,
-    };
+  // LANDING
+  if(mode==='landing')return(
+    <div className="min-h-screen bg-dragon-50">
+      <header className="bg-white border-b"><div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between"><div className="flex items-center gap-3"><div className="w-10 h-10 bg-dragon-800 rounded-lg flex items-center justify-center"><I.Dragon c="w-7 h-7 text-white"/></div><h1 className="font-bold text-dragon-900">Dragon<span className="text-dragon-600">VOTE</span></h1></div><a href="https://www.dragongc.com" className="text-sm text-dragon-600">by DragonGC</a></div></header>
+      <section className="bg-gradient-to-br from-dragon-800 to-dragon-900 text-white py-20"><div className="max-w-4xl mx-auto px-6 text-center"><h1 className="text-4xl font-bold mb-6">Principles-Based Proxy Voting</h1><p className="text-xl text-dragon-100 mb-8">Vote your values, automatically. Transform your stewardship policy into actionable voting recommendations.</p><button onClick={()=>setMode('onboarding')} className="bg-white text-dragon-800 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-dragon-50 inline-flex items-center gap-2">Get Started <I.ArrowRight c="w-5 h-5"/></button></div></section>
+      <section className="py-16"><div className="max-w-5xl mx-auto px-6"><h2 className="text-3xl font-bold text-dragon-900 text-center mb-12">How It Works</h2><div className="grid md:grid-cols-2 gap-6">{[{t:'Natural Language Policy Parsing',d:'Write your stewardship principles in plain English. Our AI extracts voting rules.'},{t:'Automated Vote Recommendations',d:'Get instant FOR/AGAINST recommendations backed by clear rationale.'},{t:'Full Transparency',d:'See exactly which rules triggered each recommendation. No black boxes.'},{t:'Override Flexibility',d:"Accept the AI recommendation or vote your own way—you're always in control."}].map((item,i)=><div key={i} className="bg-white rounded-xl p-6 border"><h3 className="text-lg font-semibold text-dragon-900 mb-2">{item.t}</h3><p className="text-dragon-600">{item.d}</p></div>)}</div></div></section>
+      <section className="bg-dragon-800 py-12"><div className="max-w-3xl mx-auto px-6 text-center"><h2 className="text-2xl font-bold text-white mb-4">No conflicts. No black boxes. Just transparent voting.</h2><button onClick={()=>setMode('onboarding')} className="mt-4 bg-white text-dragon-800 px-8 py-4 rounded-lg font-semibold inline-flex items-center gap-2">Get Started <I.ArrowRight c="w-5 h-5"/></button></div></section>
+    </div>
+  );
 
-    // ==================== DATA ====================
-    const POLICY_TEMPLATES = {
-      shareholderValue: {
-        id: 'shareholderValue',
-        name: 'Shareholder Value Focus',
-        shortDesc: 'Balanced approach prioritizing long-term returns',
-        text: `We vote proxies in the best interest of our clients with a focus on long-term shareholder value. We believe boards should be substantially independent to provide effective oversight, with at least two-thirds of directors meeting independence standards. We are concerned when directors have served for more than fifteen years, as extended tenure may compromise independent judgment. Directors should not serve on more than four public company boards to ensure adequate time and attention.
+  // ONBOARDING
+  if(mode==='onboarding')return(
+    <div className="min-h-screen bg-dragon-50">
+      <header className="bg-white border-b sticky top-0 z-10"><div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between"><div className="flex items-center gap-3"><div className="w-10 h-10 bg-dragon-800 rounded-lg flex items-center justify-center"><I.Dragon c="w-7 h-7 text-white"/></div><div><h1 className="font-bold text-dragon-900">Dragon<span className="text-dragon-600">VOTE</span></h1><p className="text-xs text-dragon-500">Setup Wizard</p></div></div><div className="flex items-center gap-2">{[1,2,3,4].map(s=><React.Fragment key={s}><div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step===s?'bg-dragon-700 text-white':step>s?'bg-dragon-500 text-white':'bg-dragon-200 text-dragon-500'}`}>{step>s?<I.Check c="w-4 h-4"/>:s}</div>{s<4&&<div className={`w-8 h-1 ${step>s?'bg-dragon-500':'bg-dragon-200'}`}/>}</React.Fragment>)}</div></div></header>
+      <main className="max-w-4xl mx-auto px-6 py-8">
+        {step===1&&<div className="space-y-6"><div className="text-center mb-8"><h2 className="text-2xl font-bold text-dragon-900">Select Your Stewardship Policy</h2><p className="text-dragon-600 mt-2">Choose a template or upload your own.</p></div><div className="grid gap-4">{Object.values(TEMPLATES).map(t=><div key={t.id} onClick={()=>selectTemplate(t.id)} className={`bg-white rounded-xl border-2 p-6 cursor-pointer ${selectedTemplate===t.id?'border-dragon-600 shadow-lg':'border-dragon-100 hover:border-dragon-300'}`}><div className="flex items-center justify-between"><div><h3 className="text-lg font-semibold text-dragon-900">{t.name}</h3><p className="text-dragon-600 text-sm mt-1">{t.shortDesc}</p></div><div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedTemplate===t.id?'border-dragon-600 bg-dragon-600':'border-dragon-300'}`}>{selectedTemplate===t.id&&<I.Check c="w-4 h-4 text-white"/>}</div></div></div>)}</div><label className="block bg-white rounded-xl border-2 border-dashed border-dragon-200 p-8 text-center cursor-pointer hover:border-dragon-400"><I.Upload c="w-10 h-10 text-dragon-400 mx-auto mb-3"/><span className="text-dragon-700 font-medium">Upload your policy document</span><span className="block text-sm text-dragon-500 mt-1">PDF, DOCX, or TXT</span><input type="file" className="hidden" onChange={()=>{setPolicyText('Custom policy...');setPolicyName('Custom Policy');setSelectedTemplate('custom');}}/></label><div className="flex justify-end pt-4"><button disabled={!selectedTemplate} onClick={()=>setStep(2)} className={`px-6 py-3 rounded-lg font-medium flex items-center gap-2 ${selectedTemplate?'bg-dragon-700 text-white hover:bg-dragon-800':'bg-dragon-200 text-dragon-400 cursor-not-allowed'}`}>Continue <I.ChevronRight c="w-4 h-4"/></button></div></div>}
+        {step===2&&<div className="space-y-6"><div className="text-center mb-8"><h2 className="text-2xl font-bold text-dragon-900">Review & Edit Your Policy</h2></div><div className="bg-white rounded-xl border p-6"><label className="block text-sm font-medium text-dragon-700 mb-2">Policy Name</label><input type="text" value={policyName} onChange={e=>setPolicyName(e.target.value)} className="w-full px-4 py-2 border rounded-lg mb-4"/><label className="block text-sm font-medium text-dragon-700 mb-2">Client Name</label><input type="text" value={clientName} onChange={e=>setClientName(e.target.value)} className="w-full px-4 py-2 border rounded-lg mb-4"/><label className="block text-sm font-medium text-dragon-700 mb-2">Policy Text</label><textarea value={policyText} onChange={e=>setPolicyText(e.target.value)} rows={10} className="w-full px-4 py-3 border rounded-lg text-sm"/></div><div className="flex justify-between pt-4"><button onClick={()=>setStep(1)} className="px-6 py-3 rounded-lg font-medium text-dragon-600 hover:bg-dragon-100 flex items-center gap-2"><I.ChevronLeft c="w-4 h-4"/> Back</button><button onClick={submitPolicy} className="px-6 py-3 rounded-lg font-medium bg-dragon-700 text-white hover:bg-dragon-800 flex items-center gap-2">Parse Policy <I.ChevronRight c="w-4 h-4"/></button></div></div>}
+        {step===3&&rules&&<div className="space-y-6"><div className="text-center mb-8"><h2 className="text-2xl font-bold text-dragon-900">Extracted Voting Rules</h2></div><div className="bg-white rounded-xl border p-6 space-y-6"><div className="grid md:grid-cols-2 gap-6">{[{label:'Board Independence',key:'boardIndependence',min:50,max:90,unit:'%'},{label:'Tenure Concern',key:'tenureConcern',min:8,max:25,unit:' yrs'},{label:'Overboarding Limit',key:'overboardingLimit',min:2,max:6,unit:' boards'},{label:'Prior SoP Threshold',key:'priorSopThreshold',min:50,max:90,unit:'%'},{label:'Non-Audit Fee Ratio',key:'nonAuditFeeRatio',min:15,max:40,unit:'%'}].map(item=><div key={item.key}><label className="block text-sm font-medium text-dragon-700 mb-2">{item.label}</label><div className="flex items-center gap-3"><input type="range" min={item.min} max={item.max} value={rules[item.key]} onChange={e=>updateRule(item.key,parseInt(e.target.value))} className="flex-1"/><span className="w-16 text-center font-semibold">{rules[item.key]}{item.unit}</span></div></div>)}<div><label className="block text-sm font-medium text-dragon-700 mb-2">PfP Grade Threshold</label><select value={rules.pfpGrade} onChange={e=>updateRule('pfpGrade',e.target.value)} className="w-full px-4 py-2 border rounded-lg"><option value="A">A - Top grade</option><option value="B">B - Good</option><option value="C">C - Moderate</option><option value="D">D - Only oppose significant misalignment</option></select></div></div></div><div className="flex justify-between pt-4"><button onClick={()=>setStep(2)} className="px-6 py-3 rounded-lg font-medium text-dragon-600 hover:bg-dragon-100 flex items-center gap-2"><I.ChevronLeft c="w-4 h-4"/> Back</button><button onClick={()=>setStep(4)} className="px-6 py-3 rounded-lg font-medium bg-dragon-700 text-white hover:bg-dragon-800 flex items-center gap-2">Confirm <I.ChevronRight c="w-4 h-4"/></button></div></div>}
+        {step===4&&<div className="space-y-6 text-center py-12"><div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto"><I.CheckCircle c="w-10 h-10 text-green-600"/></div><h2 className="text-2xl font-bold text-dragon-900">Policy Setup Complete!</h2><p className="text-dragon-600">Your stewardship policy has been configured.</p><div className="bg-white rounded-xl border p-6 max-w-md mx-auto text-left mt-8"><h3 className="font-semibold mb-3">Summary</h3><div className="space-y-2 text-sm">{[['Policy',policyName],['Client',clientName],['Independence',rules.boardIndependence+'%'],['Tenure',rules.tenureConcern+' years'],['Overboarding',rules.overboardingLimit+' boards'],['PfP Grade',rules.pfpGrade]].map(([k,v],i)=><div key={i} className="flex justify-between"><span className="text-dragon-500">{k}:</span><span className="font-medium">{v}</span></div>)}</div></div><button onClick={completeOnboarding} className="mt-8 px-8 py-4 rounded-lg font-medium bg-dragon-700 text-white hover:bg-dragon-800 inline-flex items-center gap-2">Go to Dashboard <I.ArrowRight c="w-5 h-5"/></button></div>}
+      </main>
+    </div>
+  );
 
-We expect executive compensation to be aligned with company performance. We will vote against say-on-pay proposals when pay-for-performance alignment is poor or when companies fail to adequately respond to prior say-on-pay votes receiving less than seventy percent support. We also hold compensation committee chairs accountable when significant pay concerns exist.
+  // DASHBOARD
+  if(mode==='usage'&&!selectedCompany)return(
+    <div className="min-h-screen bg-dragon-50">
+      <header className="bg-white border-b sticky top-0 z-10"><div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between"><div className="flex items-center gap-3"><div className="w-10 h-10 bg-dragon-800 rounded-lg flex items-center justify-center"><I.Dragon c="w-7 h-7 text-white"/></div><div><h1 className="font-bold text-dragon-900">Dragon<span className="text-dragon-600">VOTE</span></h1><p className="text-xs text-dragon-500">{clientName}</p></div></div><div className="flex items-center gap-4"><button className="p-2 text-dragon-600 hover:bg-dragon-100 rounded-lg"><I.Bell c="w-5 h-5"/></button><button className="p-2 text-dragon-600 hover:bg-dragon-100 rounded-lg"><I.Settings c="w-5 h-5"/></button></div></div></header>
+      <main className="max-w-6xl mx-auto px-6 py-8">
+        <div className="flex items-center justify-between mb-8"><div><h2 className="text-2xl font-bold text-dragon-900">Upcoming Meetings</h2><p className="text-dragon-600">Review and vote your portfolio companies</p></div><button className="px-4 py-2 border rounded-lg text-dragon-700 hover:bg-white flex items-center gap-2"><I.Filter c="w-4 h-4"/> Filter</button></div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">{[{l:'Upcoming',v:PORTFOLIO.filter(c=>c.status!=='not_filed').length,col:'dragon'},{l:'Ready',v:PORTFOLIO.filter(c=>c.status==='ready').length,col:'green'},{l:'Pending',v:PORTFOLIO.filter(c=>c.status==='pending').length,col:'yellow'},{l:'Concerns',v:PORTFOLIO.reduce((a,c)=>a+(c.concernCount||0),0),col:'red'}].map((s,i)=><div key={i} className="bg-white rounded-xl border p-4"><div className="text-sm text-dragon-500">{s.l}</div><div className={`text-2xl font-bold text-${s.col}-600`}>{s.v}</div></div>)}</div>
+        <div className="bg-white rounded-xl border overflow-hidden"><table className="w-full"><thead className="bg-dragon-50"><tr><th className="text-left px-6 py-3 text-sm font-medium text-dragon-600">Company</th><th className="text-left px-6 py-3 text-sm font-medium text-dragon-600">Meeting</th><th className="text-center px-6 py-3 text-sm font-medium text-dragon-600">Proposals</th><th className="text-center px-6 py-3 text-sm font-medium text-dragon-600">Concerns</th><th className="text-center px-6 py-3 text-sm font-medium text-dragon-600">Status</th><th className="px-6 py-3"></th></tr></thead><tbody>{PORTFOLIO.map(co=><tr key={co.id} className="border-t hover:bg-dragon-50"><td className="px-6 py-4"><div className="font-medium text-dragon-900">{co.name}</div><div className="text-sm text-dragon-500">{co.ticker} • {co.exchange}</div></td><td className="px-6 py-4 text-dragon-700">{co.meetingDate}</td><td className="px-6 py-4 text-center">{co.proposalCount||'—'}</td><td className="px-6 py-4 text-center">{co.concernCount>0?<span className="text-red-600 flex items-center justify-center gap-1"><I.Alert c="w-4 h-4"/>{co.concernCount}</span>:co.status==='ready'?<span className="text-green-600">0</span>:'—'}</td><td className="px-6 py-4 text-center"><span className={`px-2 py-1 rounded-full text-xs font-medium ${co.status==='ready'?'bg-green-100 text-green-700':co.status==='pending'?'bg-yellow-100 text-yellow-700':'bg-gray-100 text-gray-600'}`}>{co.status==='ready'?'Ready':co.status==='pending'?'Pending':'Not Filed'}</span></td><td className="px-6 py-4"><button onClick={()=>openMeeting(co)} disabled={co.status!=='ready'} className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-1 ${co.status==='ready'?'bg-dragon-700 text-white hover:bg-dragon-800':'bg-dragon-100 text-dragon-400 cursor-not-allowed'}`}>Review <I.ChevronRight c="w-4 h-4"/></button></td></tr>)}</tbody></table></div>
+      </main>
+    </div>
+  );
 
-We support annual say-on-pay votes to ensure ongoing accountability. We expect auditors to maintain independence, with non-audit fees not exceeding twenty-five percent of total fees.`,
-        defaultRules: { boardIndependence: 67, tenureConcern: 15, overboardingLimit: 4, pfpGrade: 'C', priorSopThreshold: 70, nonAuditFeeRatio: 25 }
-      },
-      governanceLeader: {
-        id: 'governanceLeader',
-        name: 'Governance Leader',
-        shortDesc: 'Rigorous standards for board excellence',
-        text: `We are committed to promoting excellence in corporate governance across our portfolio. We hold boards to a high standard, requiring at least seventy-five percent independence and fresh perspectives through director tenure limits of twelve years. We believe directors should limit outside commitments to three public boards maximum to ensure dedicated service.
-
-On compensation, we take a rigorous approach. We will oppose say-on-pay when the pay-for-performance grade falls below B or when prior support was below eighty percent without meaningful remediation. We vote against compensation committee chairs when there are significant pay concerns.
-
-We actively support shareholder proposals that enhance governance, including proxy access, independent board chairs, and majority voting standards. We support annual say-on-pay votes and require auditors to maintain strict independence, with non-audit fees not exceeding twenty percent of total fees.`,
-        defaultRules: { boardIndependence: 75, tenureConcern: 12, overboardingLimit: 3, pfpGrade: 'B', priorSopThreshold: 80, nonAuditFeeRatio: 20 }
-      },
-      balancedStewardship: {
-        id: 'balancedStewardship',
-        name: 'Balanced Stewardship',
-        shortDesc: 'Pragmatic approach with management deference',
-        text: `We seek to balance shareholder interests with practical business considerations. We support board independence while recognizing that experienced directors provide valuable continuity. We expect a majority of the board to be independent and become concerned only when director tenure exceeds twenty years. We allow directors to serve on up to five public boards, acknowledging that experienced directors are in high demand.
-
-We evaluate compensation in context, voting against say-on-pay only when pay-for-performance is significantly misaligned with a grade of D or F, or when companies ignore shareholder feedback after votes below sixty percent support.
-
-We generally defer to management on routine matters while maintaining oversight standards. We support annual say-on-pay frequency and standard auditor independence thresholds of thirty percent for non-audit fees.`,
-        defaultRules: { boardIndependence: 50, tenureConcern: 20, overboardingLimit: 5, pfpGrade: 'D', priorSopThreshold: 60, nonAuditFeeRatio: 30 }
-      }
-    };
-
-    const SAMPLE_COMPANY = {
-      id: 'sampl',
-      name: 'Sample Company Inc.',
-      ticker: 'SAMPL',
-      exchange: 'NASDAQ',
-      meetingDate: 'March 23, 2025',
-      voteDeadline: 'March 21, 2025',
-      sector: 'Information Technology',
-      marketCap: '$2,518,523 MM',
-      sharesHeld: '245,000',
-      boardIndependence: 89,
-      status: 'ready',
-      directors: [
-        { name: 'Charlene M. Jameson', age: 55, independent: false, tenure: 8, committees: ['CEO'], otherBoards: 1, role: 'CEO' },
-        { name: 'Gary J. Albert', age: 72, independent: true, tenure: 19, committees: ['Audit (Chair)'], otherBoards: 0 },
-        { name: 'Jacintha Andrews', age: 61, independent: true, tenure: 14, committees: ['Comp (Chair)'], otherBoards: 1 },
-        { name: 'Levi S. Artur', age: 62, independent: true, tenure: 21, committees: ['Gov (Chair)'], otherBoards: 0, role: 'Chair' },
-        { name: 'Ragnar S. Didrikson', age: 71, independent: true, tenure: 12, committees: ['Audit'], otherBoards: 1 },
-        { name: 'Alexis Gorman', age: 58, independent: true, tenure: 2, committees: ['Nom (Chair)'], otherBoards: 0 },
-        { name: 'Sarah W. Loris', age: 64, independent: true, tenure: 9, committees: ['Audit', 'Nom'], otherBoards: 1 },
-        { name: 'Jennifer C. Ribeiro', age: 76, independent: true, tenure: 4, committees: ['Audit'], otherBoards: 1 },
-        { name: 'Boris A. Ring', age: 64, independent: true, tenure: 7, committees: [], otherBoards: 1 }
-      ],
-      compensation: { ceoName: 'Charlene M. Jameson', totalComp: 19420097, pfpGrade: 'D', priorSopSupport: 64 },
-      auditor: { name: 'PricewaterhouseCoopers LLP', tenure: 14, nonAuditRatio: 21.7 }
-    };
-
-    const PORTFOLIO = [
-      SAMPLE_COMPANY,
-      { id: 'apex', name: 'Apex Technologies Corp.', ticker: 'APEX', exchange: 'NYSE', meetingDate: 'March 28, 2025', voteDeadline: 'March 26, 2025', sector: 'Software', status: 'ready', proposalCount: 4, concernCount: 1 },
-      { id: 'sumf', name: 'Summit Financial Group', ticker: 'SUMF', exchange: 'NYSE', meetingDate: 'April 5, 2025', voteDeadline: 'April 3, 2025', sector: 'Financials', status: 'pending', proposalCount: 6, concernCount: 0 },
-      { id: 'prhl', name: 'Pacific Retail Holdings', ticker: 'PRHL', exchange: 'NASDAQ', meetingDate: 'April 12, 2025', voteDeadline: 'April 10, 2025', sector: 'Consumer', status: 'pending', proposalCount: 5, concernCount: 2 },
-      { id: 'nrgy', name: 'Northern Energy Partners', ticker: 'NRGY', exchange: 'NYSE', meetingDate: 'April 18, 2025', voteDeadline: 'April 16, 2025', sector: 'Energy', status: 'not_filed' }
-    ];
-
-    // ==================== HELPERS ====================
-    function parsePolicy(text) {
-      const rules = { boardIndependence: 67, tenureConcern: 15, overboardingLimit: 4, pfpGrade: 'C', priorSopThreshold: 70, nonAuditFeeRatio: 25 };
-      const numWords = { 'fifty': 50, 'sixty': 60, 'two-thirds': 67, 'seventy': 70, 'seventy-five': 75, 'eighty': 80, 'majority': 50, 'ten': 10, 'twelve': 12, 'fifteen': 15, 'twenty': 20, 'twenty-five': 25, 'thirty': 30, 'three': 3, 'four': 4, 'five': 5 };
-      
-      // Parse independence
-      const indMatch = text.match(/(?:at least |requiring )?([\w-]+)(?:\s*percent| percent)/i);
-      if (indMatch && numWords[indMatch[1].toLowerCase()]) rules.boardIndependence = numWords[indMatch[1].toLowerCase()];
-      
-      // Parse tenure
-      const tenMatch = text.match(/(?:more than|exceeds?|limits? of)\s*([\w-]+)\s*years/i);
-      if (tenMatch && numWords[tenMatch[1].toLowerCase()]) rules.tenureConcern = numWords[tenMatch[1].toLowerCase()];
-      
-      // Parse overboarding
-      const boardMatch = text.match(/(?:more than|up to)\s*([\w-]+)\s*(?:public\s*)?boards/i);
-      if (boardMatch && numWords[boardMatch[1].toLowerCase()]) rules.overboardingLimit = numWords[boardMatch[1].toLowerCase()];
-      
-      // Parse PfP grade
-      if (text.includes('grade of D or F') || text.includes('significantly misaligned')) rules.pfpGrade = 'D';
-      else if (text.includes('falls below B')) rules.pfpGrade = 'B';
-      else if (text.includes('poor')) rules.pfpGrade = 'C';
-      
-      // Parse SoP threshold
-      const sopMatch = text.match(/(?:less than|below)\s*([\w-]+)\s*percent\s*support/i);
-      if (sopMatch && numWords[sopMatch[1].toLowerCase()]) rules.priorSopThreshold = numWords[sopMatch[1].toLowerCase()];
-      
-      // Parse audit fee
-      const feeMatch = text.match(/non-audit fees[^.]*?([\w-]+)\s*percent/i);
-      if (feeMatch && numWords[feeMatch[1].toLowerCase()]) rules.nonAuditFeeRatio = numWords[feeMatch[1].toLowerCase()];
-      
-      return rules;
-    }
-
-    function generateProposals(company, rules) {
-      const gradeOrder = ['A', 'B', 'C', 'D', 'F'];
-      
-      // Directors
-      const directorRecs = company.directors.map(d => {
-        const issues = [];
-        if (d.tenure > rules.tenureConcern) issues.push({ rule: 'Tenure Concern', fact: `${d.tenure} years`, threshold: `>${rules.tenureConcern} years` });
-        if (d.otherBoards + 1 > rules.overboardingLimit) issues.push({ rule: 'Overboarding', fact: `${d.otherBoards + 1} boards`, threshold: `>${rules.overboardingLimit}` });
-        if (d.committees.some(c => c.includes('Comp')) && company.compensation.priorSopSupport < rules.priorSopThreshold) {
-          issues.push({ rule: 'Comp Chair Accountability', fact: `Prior SoP: ${company.compensation.priorSopSupport}%`, threshold: `<${rules.priorSopThreshold}%` });
-        }
-        return { ...d, issues, recommendation: issues.length > 0 ? 'AGAINST' : 'FOR' };
-      });
-
-      const proposals = [
-        {
-          id: '1.00', matter: 'Election of Directors', type: 'directors', board: 'FOR',
-          recommendation: directorRecs.some(d => d.recommendation === 'AGAINST') ? 'MIXED' : 'FOR',
-          directors: directorRecs,
-          hasIssues: directorRecs.some(d => d.issues.length > 0),
-          summary: `${directorRecs.filter(d => d.recommendation === 'FOR').length} FOR, ${directorRecs.filter(d => d.recommendation === 'AGAINST').length} AGAINST`
-        },
-        {
-          id: '2.00', matter: 'Ratification of Auditor', type: 'auditor', board: 'FOR',
-          recommendation: company.auditor.nonAuditRatio > rules.nonAuditFeeRatio ? 'AGAINST' : 'FOR',
-          hasIssues: company.auditor.nonAuditRatio > rules.nonAuditFeeRatio,
-          issues: company.auditor.nonAuditRatio > rules.nonAuditFeeRatio ? [{ rule: 'Non-Audit Fee Ratio', fact: `${company.auditor.nonAuditRatio}%`, threshold: `>${rules.nonAuditFeeRatio}%` }] : [],
-          rationale: `${company.auditor.name} - Tenure: ${company.auditor.tenure} years. Non-audit fee ratio: ${company.auditor.nonAuditRatio}%`
-        },
-        {
-          id: '3.00', matter: 'Advisory Vote on Executive Compensation (Say-on-Pay)', type: 'sop', board: 'FOR',
-          recommendation: (gradeOrder.indexOf(company.compensation.pfpGrade) > gradeOrder.indexOf(rules.pfpGrade) || company.compensation.priorSopSupport < rules.priorSopThreshold) ? 'AGAINST' : 'FOR',
-          hasIssues: gradeOrder.indexOf(company.compensation.pfpGrade) > gradeOrder.indexOf(rules.pfpGrade) || company.compensation.priorSopSupport < rules.priorSopThreshold,
-          issues: [
-            ...(gradeOrder.indexOf(company.compensation.pfpGrade) > gradeOrder.indexOf(rules.pfpGrade) ? [{ rule: 'Pay-for-Performance', fact: `Grade ${company.compensation.pfpGrade}`, threshold: `Below ${rules.pfpGrade}` }] : []),
-            ...(company.compensation.priorSopSupport < rules.priorSopThreshold ? [{ rule: 'Prior SoP Response', fact: `${company.compensation.priorSopSupport}%`, threshold: `<${rules.priorSopThreshold}%` }] : [])
-          ],
-          rationale: `CEO Total Compensation: $${(company.compensation.totalComp/1000000).toFixed(1)}M. Pay-for-Performance Grade: ${company.compensation.pfpGrade}. Prior Year Support: ${company.compensation.priorSopSupport}%`
-        },
-        {
-          id: '4.00', matter: 'Advisory Vote on Say-on-Pay Frequency', type: 'frequency', board: '1 YEAR',
-          recommendation: '1 YEAR', hasIssues: false, issues: [],
-          rationale: 'Annual say-on-pay votes ensure ongoing shareholder oversight of executive compensation.'
-        },
-        {
-          id: '5.00', matter: 'Shareholder Proposal: Proxy Access Amendment', type: 'shareholder', board: 'AGAINST',
-          recommendation: 'FOR', hasIssues: false, issues: [],
-          rationale: 'Proxy access enhances shareholder rights and board accountability. We support reasonable shareholder proposals that improve governance.'
-        }
-      ];
-      
-      return proposals;
-    }
-
-    // ==================== MAIN APP ====================
-    function App() {
-      const [mode, setMode] = useState('landing');
-      const [step, setStep] = useState(1);
-      const [selectedTemplate, setSelectedTemplate] = useState(null);
-      const [policyText, setPolicyText] = useState('');
-      const [policyName, setPolicyName] = useState('');
-      const [policyVersion] = useState('v2025.1');
-      const [rules, setRules] = useState(null);
-      const [uploadedFile, setUploadedFile] = useState(null);
-      const [selectedCompany, setSelectedCompany] = useState(null);
-      const [proposals, setProposals] = useState([]);
-      const [currentProposal, setCurrentProposal] = useState(0);
-      const [votes, setVotes] = useState({});
-
-      // Handlers
-      const selectTemplate = (id) => {
-        setSelectedTemplate(id);
-        setPolicyText(POLICY_TEMPLATES[id].text);
-        setPolicyName(POLICY_TEMPLATES[id].name);
-      };
-
-      const submitPolicy = () => {
-        setRules(parsePolicy(policyText));
-        setStep(3);
-      };
-
-      const updateRule = (key, val) => setRules(r => ({...r, [key]: val}));
-
-      const completeOnboarding = () => setMode('usage');
-
-      const openMeeting = (company) => {
-        if (company.status !== 'ready') return;
-        const fullCompany = company.id === 'sampl' ? SAMPLE_COMPANY : company;
-        setSelectedCompany(fullCompany);
-        const props = company.id === 'sampl' ? generateProposals(fullCompany, rules) : [
-          { id: '1.00', matter: 'Election of Directors', type: 'directors', board: 'FOR', recommendation: 'FOR', hasIssues: false },
-          { id: '2.00', matter: 'Ratification of Auditor', type: 'auditor', board: 'FOR', recommendation: 'FOR', hasIssues: false },
-          { id: '3.00', matter: 'Say-on-Pay', type: 'sop', board: 'FOR', recommendation: company.concernCount > 0 ? 'AGAINST' : 'FOR', hasIssues: company.concernCount > 0 }
-        ];
-        setProposals(props);
-        setCurrentProposal(0);
-        // Init votes
-        const v = {};
-        props.forEach(p => {
-          if (p.directors) p.directors.forEach(d => v[`${p.id}-${d.name}`] = d.recommendation);
-          else v[p.id] = p.recommendation;
-        });
-        setVotes(v);
-      };
-
-      const closeMeeting = () => { setSelectedCompany(null); setProposals([]); setCurrentProposal(0); };
-
-      const setVote = (key, val) => setVotes(v => ({...v, [key]: val}));
-
-      // ========== LANDING PAGE RENDER ==========
-      if (mode === 'landing') {
-        return (
-          <div className="min-h-screen bg-dragon-50">
-            {/* Header */}
-            <header className="bg-white border-b border-dragon-100">
-              <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-dragon-800 rounded-lg flex items-center justify-center">
-                    <Icons.Dragon className="w-7 h-7 text-white" />
-                  </div>
-                  <div>
-                    <h1 className="font-bold text-dragon-900">Dragon<span className="text-dragon-600">VOTE</span></h1>
-                  </div>
-                </div>
-                <a href="https://www.dragongc.com" target="_blank" rel="noopener noreferrer" className="text-sm text-dragon-600 hover:text-dragon-800">
-                  by DragonGC
-                </a>
-              </div>
-            </header>
-
-            {/* Hero Section */}
-            <section className="bg-gradient-to-br from-dragon-800 to-dragon-900 text-white py-20">
-              <div className="max-w-4xl mx-auto px-6 text-center">
-                <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                  Principles-Based Proxy Voting
-                </h1>
-                <p className="text-xl text-dragon-100 mb-8 max-w-2xl mx-auto">
-                  Vote your values, automatically. Transform your stewardship policy into actionable voting recommendations—no more manually reviewing hundreds of proxy statements.
-                </p>
-                <button 
-                  onClick={() => setMode('onboarding')}
-                  className="bg-white text-dragon-800 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-dragon-50 transition-colors inline-flex items-center gap-2"
-                >
-                  Get Started <Icons.ArrowRight className="w-5 h-5" />
-                </button>
-              </div>
-            </section>
-
-            {/* Features Section */}
-            <section className="py-20">
-              <div className="max-w-5xl mx-auto px-6">
-                <h2 className="text-3xl font-bold text-dragon-900 text-center mb-12">How It Works</h2>
-                
-                <div className="grid md:grid-cols-2 gap-8">
-                  <div className="bg-white rounded-xl p-6 border border-dragon-100 shadow-sm">
-                    <div className="w-12 h-12 bg-dragon-100 rounded-lg flex items-center justify-center mb-4">
-                      <Icons.FileText className="w-6 h-6 text-dragon-700" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-dragon-900 mb-2">Natural Language Policy Parsing</h3>
-                    <p className="text-dragon-600">Write your stewardship principles in plain English. Our AI extracts voting rules—board independence thresholds, compensation standards, and more.</p>
-                  </div>
-
-                  <div className="bg-white rounded-xl p-6 border border-dragon-100 shadow-sm">
-                    <div className="w-12 h-12 bg-dragon-100 rounded-lg flex items-center justify-center mb-4">
-                      <Icons.Vote className="w-6 h-6 text-dragon-700" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-dragon-900 mb-2">Automated Vote Recommendations</h3>
-                    <p className="text-dragon-600">Get instant FOR/AGAINST recommendations backed by clear rationale tied directly to your policy for every proposal at every meeting.</p>
-                  </div>
-
-                  <div className="bg-white rounded-xl p-6 border border-dragon-100 shadow-sm">
-                    <div className="w-12 h-12 bg-dragon-100 rounded-lg flex items-center justify-center mb-4">
-                      <Icons.Scale className="w-6 h-6 text-dragon-700" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-dragon-900 mb-2">Full Transparency</h3>
-                    <p className="text-dragon-600">See exactly which rules triggered each recommendation, with specific thresholds and company data. No black boxes.</p>
-                  </div>
-
-                  <div className="bg-white rounded-xl p-6 border border-dragon-100 shadow-sm">
-                    <div className="w-12 h-12 bg-dragon-100 rounded-lg flex items-center justify-center mb-4">
-                      <Icons.Edit className="w-6 h-6 text-dragon-700" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-dragon-900 mb-2">Override Flexibility</h3>
-                    <p className="text-dragon-600">Accept the AI recommendation or vote your own way—you're always in control. Review, adjust, and finalize at your pace.</p>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* CTA Section */}
-            <section className="bg-dragon-800 py-16">
-              <div className="max-w-3xl mx-auto px-6 text-center">
-                <h2 className="text-2xl font-bold text-white mb-4">Stop drowning in proxy paperwork.</h2>
-                <p className="text-dragon-200 mb-8">Start voting with purpose.</p>
-                <button 
-                  onClick={() => setMode('onboarding')}
-                  className="bg-white text-dragon-800 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-dragon-50 transition-colors inline-flex items-center gap-2"
-                >
-                  Get Started <Icons.ArrowRight className="w-5 h-5" />
-                </button>
-              </div>
-            </section>
-
-            {/* Footer */}
-            <footer className="bg-dragon-900 text-dragon-300 py-8">
-              <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Icons.Dragon className="w-6 h-6 text-white" />
-                  <span className="text-white font-medium">DragonVOTE</span>
-                </div>
-                <p className="text-sm">© 2025 DragonGC. All rights reserved.</p>
-              </div>
-            </footer>
-          </div>
-        );
-      }
-
-      // ========== ONBOARDING RENDER ==========
-      if (mode === 'onboarding') {
-        return (
-          <div className="min-h-screen bg-dragon-50">
-            {/* Header */}
-            <header className="bg-white border-b border-dragon-100 sticky top-0 z-10">
-              <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-dragon-800 rounded-lg flex items-center justify-center">
-                    <Icons.Dragon className="w-7 h-7 text-white" />
-                  </div>
-                  <div>
-                    <h1 className="font-bold text-dragon-900">Dragon<span className="text-dragon-600">VOTE</span></h1>
-                    <p className="text-xs text-dragon-500">Setup Wizard</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  {[1,2,3,4].map(s => (
-                    <React.Fragment key={s}>
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step === s ? 'bg-dragon-700 text-white' : step > s ? 'bg-dragon-500 text-white' : 'bg-dragon-200 text-dragon-500'}`}>
-                        {step > s ? <Icons.Check className="w-4 h-4" /> : s}
-                      </div>
-                      {s < 4 && <div className={`w-8 h-1 ${step > s ? 'bg-dragon-500' : 'bg-dragon-200'}`} />}
-                    </React.Fragment>
-                  ))}
-                </div>
-              </div>
-            </header>
-
-            <main className="max-w-4xl mx-auto px-6 py-8">
-              {/* Step 1: Select Template */}
-              {step === 1 && (
-                <div className="space-y-6">
-                  <div className="text-center mb-8">
-                    <h2 className="text-2xl font-bold text-dragon-900">Select Your Stewardship Policy</h2>
-                    <p className="text-dragon-600 mt-2">Choose a policy template that aligns with your investment philosophy</p>
-                  </div>
-                  
-                  {Object.values(POLICY_TEMPLATES).map(t => (
-                    <div key={t.id} onClick={() => selectTemplate(t.id)}
-                      className={`p-6 border-2 rounded-xl cursor-pointer transition-all ${selectedTemplate === t.id ? 'border-dragon-600 bg-dragon-50 shadow-lg' : 'border-dragon-200 hover:border-dragon-300 hover:shadow'}`}>
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h3 className="text-lg font-semibold text-dragon-900">{t.name}</h3>
-                            {selectedTemplate === t.id && <span className="bg-dragon-600 text-white text-xs px-2 py-1 rounded-full">Selected</span>}
-                          </div>
-                          <p className="text-sm text-dragon-500 mb-3">{t.shortDesc}</p>
-                          <p className="text-sm text-dragon-700 line-clamp-3">{t.text.substring(0, 200)}...</p>
-                        </div>
-                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ml-4 ${selectedTemplate === t.id ? 'border-dragon-600 bg-dragon-600' : 'border-dragon-300'}`}>
-                          {selectedTemplate === t.id && <Icons.Check className="w-4 h-4 text-white" />}
-                        </div>
-                      </div>
-                      <div className="mt-4 pt-4 border-t border-gray-100 grid grid-cols-3 gap-4 text-xs">
-                        <div><span className="text-dragon-500">Independence</span><span className="block font-semibold">≥{t.defaultRules.boardIndependence}%</span></div>
-                        <div><span className="text-dragon-500">Tenure Limit</span><span className="block font-semibold">{t.defaultRules.tenureConcern} years</span></div>
-                        <div><span className="text-dragon-500">PfP Threshold</span><span className="block font-semibold">Grade {t.defaultRules.pfpGrade}+</span></div>
-                      </div>
-                    </div>
-                  ))}
-                  
-                  {selectedTemplate && (
-                    <button onClick={() => setStep(2)} className="w-full bg-dragon-700 text-white py-3 px-6 rounded-lg font-medium hover:bg-dragon-800 flex items-center justify-center gap-2">
-                      Continue <Icons.ChevronRight className="w-5 h-5" />
-                    </button>
-                  )}
-                </div>
-              )}
-
-              {/* Step 2: Edit Policy */}
-              {step === 2 && (
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <button onClick={() => setStep(1)} className="text-dragon-500 hover:text-dragon-700 flex items-center gap-1">
-                      <Icons.ChevronLeft className="w-4 h-4" /> Back
-                    </button>
-                    <span className="text-sm text-dragon-500">Step 2 of 4</span>
-                  </div>
-                  
-                  <div className="text-center mb-6">
-                    <h2 className="text-2xl font-bold text-dragon-900">Customize Your Policy</h2>
-                    <p className="text-dragon-600 mt-2">Edit using natural language. We'll extract the voting rules.</p>
-                  </div>
-
-                  <div className="bg-gray-50 rounded-xl p-4 mb-4">
-                    <div className="flex items-center gap-2 text-sm text-dragon-600">
-                      <Icons.Edit className="w-4 h-4" />
-                      <span>Based on: <strong>{POLICY_TEMPLATES[selectedTemplate]?.name}</strong></span>
-                    </div>
-                    <p className="text-xs text-dragon-500 mt-1">Try changing "two-thirds" to "eighty percent" or "fifteen years" to "ten years"</p>
-                  </div>
-
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-dragon-700 mb-2">Policy Name</label>
-                    <input type="text" value={policyName} onChange={e => setPolicyName(e.target.value)}
-                      className="w-full px-4 py-2 border border-dragon-300 rounded-lg focus:ring-2 focus:ring-dragon-500"
-                      placeholder="e.g., ABC Capital Proxy Policy" />
-                  </div>
-
-                  <textarea value={policyText} onChange={e => setPolicyText(e.target.value)}
-                    className="w-full h-80 p-4 border border-dragon-300 rounded-xl text-sm leading-relaxed focus:ring-2 focus:ring-dragon-500" />
-
-                  <button onClick={submitPolicy} className="w-full bg-dragon-700 text-white py-3 px-6 rounded-lg font-medium hover:bg-dragon-800 flex items-center justify-center gap-2">
-                    Translate to Voting Rules <Icons.ChevronRight className="w-5 h-5" />
-                  </button>
-                </div>
-              )}
-
-              {/* Step 3: Review Rules */}
-              {step === 3 && rules && (
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <button onClick={() => setStep(2)} className="text-dragon-500 hover:text-dragon-700 flex items-center gap-1">
-                      <Icons.ChevronLeft className="w-4 h-4" /> Back
-                    </button>
-                    <span className="text-sm text-dragon-500">Step 3 of 4</span>
-                  </div>
-                  
-                  <div className="text-center mb-6">
-                    <h2 className="text-2xl font-bold text-dragon-900">Review Extracted Rules</h2>
-                    <p className="text-dragon-600 mt-2">Adjust thresholds if needed</p>
-                  </div>
-
-                  <div className="bg-green-50 border border-dragon-200 rounded-xl p-4 mb-6">
-                    <div className="flex items-center gap-2 text-dragon-800">
-                      <Icons.CheckCircle className="w-5 h-5" />
-                      <span className="font-medium">Policy parsed successfully</span>
-                    </div>
-                  </div>
-
-                  {/* Board Rules */}
-                  <div className="bg-white border rounded-xl p-4">
-                    <div className="flex items-center gap-3 mb-4">
-                      <Icons.Users className="w-5 h-5 text-dragon-600" />
-                      <h3 className="font-semibold">Board Composition</h3>
-                    </div>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between py-2 border-b">
-                        <div>
-                          <span className="text-sm font-medium">Board Independence Minimum</span>
-                          <p className="text-xs text-dragon-500">Vote against if below threshold</p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <input type="range" min="50" max="90" value={rules.boardIndependence} onChange={e => updateRule('boardIndependence', +e.target.value)} className="w-24" />
-                          <span className="w-12 text-right font-semibold text-dragon-600">{rules.boardIndependence}%</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between py-2 border-b">
-                        <div>
-                          <span className="text-sm font-medium">Director Tenure Concern</span>
-                          <p className="text-xs text-dragon-500">Flag directors exceeding threshold</p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <input type="range" min="8" max="25" value={rules.tenureConcern} onChange={e => updateRule('tenureConcern', +e.target.value)} className="w-24" />
-                          <span className="w-12 text-right font-semibold text-dragon-600">{rules.tenureConcern} yrs</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between py-2">
-                        <div>
-                          <span className="text-sm font-medium">Overboarding Limit</span>
-                          <p className="text-xs text-dragon-500">Max public boards</p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <input type="range" min="2" max="6" value={rules.overboardingLimit} onChange={e => updateRule('overboardingLimit', +e.target.value)} className="w-24" />
-                          <span className="w-12 text-right font-semibold text-dragon-600">{rules.overboardingLimit}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Compensation Rules */}
-                  <div className="bg-white border rounded-xl p-4">
-                    <div className="flex items-center gap-3 mb-4">
-                      <Icons.DollarSign className="w-5 h-5 text-dragon-600" />
-                      <h3 className="font-semibold">Executive Compensation</h3>
-                    </div>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between py-2 border-b">
-                        <div>
-                          <span className="text-sm font-medium">Pay-for-Performance Grade</span>
-                          <p className="text-xs text-dragon-500">Vote against SoP if below</p>
-                        </div>
-                        <select value={rules.pfpGrade} onChange={e => updateRule('pfpGrade', e.target.value)}
-                          className="px-3 py-1 border rounded-lg font-semibold text-dragon-600">
-                          <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option>
-                        </select>
-                      </div>
-                      <div className="flex items-center justify-between py-2">
-                        <div>
-                          <span className="text-sm font-medium">Prior SoP Support Threshold</span>
-                          <p className="text-xs text-dragon-500">Require response if below</p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <input type="range" min="50" max="85" step="5" value={rules.priorSopThreshold} onChange={e => updateRule('priorSopThreshold', +e.target.value)} className="w-24" />
-                          <span className="w-12 text-right font-semibold text-dragon-600">{rules.priorSopThreshold}%</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Audit Rules */}
-                  <div className="bg-white border rounded-xl p-4">
-                    <div className="flex items-center gap-3 mb-4">
-                      <Icons.Scale className="w-5 h-5 text-purple-600" />
-                      <h3 className="font-semibold">Audit & Oversight</h3>
-                    </div>
-                    <div className="flex items-center justify-between py-2">
-                      <div>
-                        <span className="text-sm font-medium">Non-Audit Fee Ratio Max</span>
-                        <p className="text-xs text-dragon-500">Vote against if exceeded</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <input type="range" min="15" max="40" step="5" value={rules.nonAuditFeeRatio} onChange={e => updateRule('nonAuditFeeRatio', +e.target.value)} className="w-24" />
-                        <span className="w-12 text-right font-semibold text-dragon-600">{rules.nonAuditFeeRatio}%</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <button onClick={() => setStep(4)} className="w-full bg-dragon-700 text-white py-3 px-6 rounded-lg font-medium hover:bg-dragon-800 flex items-center justify-center gap-2">
-                    Continue to Portfolio <Icons.ChevronRight className="w-5 h-5" />
-                  </button>
-                </div>
-              )}
-
-              {/* Step 4: Upload Portfolio */}
-              {step === 4 && (
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <button onClick={() => setStep(3)} className="text-dragon-500 hover:text-dragon-700 flex items-center gap-1">
-                      <Icons.ChevronLeft className="w-4 h-4" /> Back
-                    </button>
-                    <span className="text-sm text-dragon-500">Step 4 of 4</span>
-                  </div>
-                  
-                  <div className="text-center mb-6">
-                    <h2 className="text-2xl font-bold text-dragon-900">Upload Your Portfolio</h2>
-                    <p className="text-dragon-600 mt-2">Import tickers to monitor for upcoming meetings</p>
-                  </div>
-
-                  <div className="border-2 border-dashed border-dragon-300 rounded-xl p-8 text-center hover:border-blue-400 transition-colors">
-                    <input type="file" accept=".csv,.xlsx" onChange={e => setUploadedFile(e.target.files[0])} className="hidden" id="file-upload" />
-                    <label htmlFor="file-upload" className="cursor-pointer">
-                      <Icons.Upload className="w-12 h-12 text-dragon-400 mx-auto mb-4" />
-                      <p className="text-dragon-600 font-medium">Drop your portfolio file here or click to browse</p>
-                      <p className="text-sm text-dragon-500 mt-2">Accepts CSV or Excel with ticker symbols</p>
-                    </label>
-                  </div>
-
-                  {uploadedFile && (
-                    <div className="bg-green-50 border border-dragon-200 rounded-xl p-4">
-                      <div className="flex items-center gap-2 text-dragon-800">
-                        <Icons.CheckCircle className="w-5 h-5" />
-                        <span className="font-medium">{uploadedFile.name} uploaded</span>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="bg-gray-50 rounded-xl p-4">
-                    <h3 className="font-medium text-dragon-900 mb-3">Or use demo portfolio</h3>
-                    <p className="text-sm text-dragon-600 mb-4">5 companies with upcoming meetings:</p>
-                    <div className="space-y-2 text-sm">
-                      {PORTFOLIO.map(c => (
-                        <div key={c.id} className="flex justify-between">
-                          <span className="font-medium">{c.ticker}</span>
-                          <span className="text-dragon-500">{c.name}</span>
-                          <span className="text-dragon-400">{c.meetingDate}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="bg-dragon-50 border border-blue-200 rounded-xl p-4">
-                    <h3 className="font-semibold text-blue-900 mb-2">Policy Summary</h3>
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div><span className="text-blue-700">Name:</span> <span className="font-medium text-blue-900">{policyName}</span></div>
-                      <div><span className="text-blue-700">Version:</span> <span className="font-medium text-blue-900">{policyVersion}</span></div>
-                    </div>
-                  </div>
-
-                  <button onClick={completeOnboarding} className="w-full bg-dragon-700 text-white py-3 px-6 rounded-lg font-medium hover:bg-dragon-800 flex items-center justify-center gap-2">
-                    Complete Setup & Go to Dashboard <Icons.ChevronRight className="w-5 h-5" />
-                  </button>
-                </div>
-              )}
-            </main>
-          </div>
-        );
-      }
-
-      // ========== USAGE MODE ==========
-      return (
-        <div className="min-h-screen bg-dragon-50">
-          {/* Header */}
-          <header className="bg-white border-b border-dragon-100 sticky top-0 z-10">
-            <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-dragon-800 rounded-lg flex items-center justify-center">
-                  <Icons.Dragon className="w-7 h-7 text-white" />
-                </div>
-                <div>
-                  <h1 className="font-bold text-dragon-900">Dragon<span className="text-dragon-600">VOTE</span></h1>
-                  <p className="text-xs text-dragon-500">{policyName} • {policyVersion}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <button className="p-2 text-dragon-500 hover:bg-dragon-100 rounded-lg"><Icons.Bell className="w-5 h-5" /></button>
-                <button className="p-2 text-dragon-500 hover:bg-dragon-100 rounded-lg"><Icons.Settings className="w-5 h-5" /></button>
-                <div className="w-8 h-8 bg-dragon-100 rounded-full flex items-center justify-center text-dragon-700 font-medium text-sm">AC</div>
-              </div>
-            </div>
-          </header>
-
-          <main className="max-w-6xl mx-auto px-6 py-8">
-            {/* Dashboard */}
-            {!selectedCompany && (
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="text-2xl font-bold text-dragon-900">Upcoming Meetings</h2>
-                    <p className="text-dragon-600">5 meetings requiring attention</p>
-                  </div>
-                  <div className="flex gap-3">
-                    <button className="px-4 py-2 border rounded-lg text-sm font-medium text-dragon-700 hover:bg-dragon-50 flex items-center gap-2">
-                      <Icons.Filter className="w-4 h-4" /> Filter
-                    </button>
-                    <button className="px-4 py-2 border rounded-lg text-sm font-medium text-dragon-700 hover:bg-dragon-50 flex items-center gap-2">
-                      <Icons.Download className="w-4 h-4" /> Export
-                    </button>
-                  </div>
-                </div>
-
-                {/* Stats */}
-                <div className="grid grid-cols-4 gap-4">
-                  <div className="bg-white rounded-xl border p-4">
-                    <div className="text-2xl font-bold">5</div>
-                    <div className="text-sm text-dragon-500">Total Meetings</div>
-                  </div>
-                  <div className="bg-white rounded-xl border p-4">
-                    <div className="text-2xl font-bold text-dragon-600">2</div>
-                    <div className="text-sm text-dragon-500">Ready for Review</div>
-                  </div>
-                  <div className="bg-white rounded-xl border p-4">
-                    <div className="text-2xl font-bold text-yellow-600">2</div>
-                    <div className="text-sm text-dragon-500">Pending Analysis</div>
-                  </div>
-                  <div className="bg-white rounded-xl border p-4">
-                    <div className="text-2xl font-bold text-red-600">3</div>
-                    <div className="text-sm text-dragon-500">Items with Concerns</div>
-                  </div>
-                </div>
-
-                {/* Meeting List */}
-                <div className="bg-white rounded-xl border overflow-hidden">
-                  <div className="px-4 py-3 border-b bg-gray-50">
-                    <h3 className="font-semibold">Meeting Calendar</h3>
-                  </div>
-                  <div className="divide-y">
-                    {PORTFOLIO.map(c => (
-                      <div key={c.id} onClick={() => openMeeting(c)}
-                        className={`p-4 flex items-center justify-between ${c.status === 'ready' ? 'hover:bg-dragon-50 cursor-pointer' : 'opacity-60'}`}>
-                        <div className="flex items-center gap-4">
-                          <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${c.status === 'ready' ? 'bg-dragon-100' : c.status === 'pending' ? 'bg-yellow-100' : 'bg-dragon-50'}`}>
-                            <Icons.Calendar className={`w-6 h-6 ${c.status === 'ready' ? 'text-dragon-600' : c.status === 'pending' ? 'text-yellow-600' : 'text-dragon-400'}`} />
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <span className="font-semibold">{c.name}</span>
-                              <span className="text-sm text-dragon-500">({c.ticker})</span>
-                            </div>
-                            <div className="text-sm text-dragon-500">{c.sector} • {c.exchange}</div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-6">
-                          <div className="text-right">
-                            <div className="text-sm font-medium">{c.meetingDate}</div>
-                            <div className="text-xs text-dragon-500">Vote by {c.voteDeadline}</div>
-                          </div>
-                          <div className="text-right min-w-[100px]">
-                            {c.status === 'ready' && (
-                              <>
-                                <div className="text-sm font-medium">{c.proposalCount || 5} proposals</div>
-                                {(c.concernCount > 0 || c.id === 'sampl') && (
-                                  <div className="text-xs text-red-600 flex items-center justify-end gap-1">
-                                    <Icons.AlertTriangle className="w-3 h-3" />
-                                    {c.id === 'sampl' ? 3 : c.concernCount} concerns
-                                  </div>
-                                )}
-                              </>
-                            )}
-                            {c.status === 'pending' && <span className="text-sm text-yellow-600">Pending</span>}
-                            {c.status === 'not_filed' && <span className="text-sm text-dragon-400">Awaiting Filing</span>}
-                          </div>
-                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${c.status === 'ready' ? 'bg-dragon-100 text-dragon-800' : c.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-dragon-50 text-dragon-600'}`}>
-                            {c.status === 'ready' ? 'Ready' : c.status === 'pending' ? 'Pending' : 'Awaiting'}
-                          </span>
-                          {c.status === 'ready' && <Icons.ChevronRight className="w-5 h-5 text-dragon-400" />}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Meeting Review */}
-            {selectedCompany && proposals.length > 0 && (
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <button onClick={closeMeeting} className="text-dragon-500 hover:text-dragon-700 flex items-center gap-1">
-                    <Icons.ChevronLeft className="w-4 h-4" /> Back to Dashboard
-                  </button>
-                  <span className="text-sm text-dragon-500">Proposal {currentProposal + 1} of {proposals.length}</span>
-                </div>
-
-                {/* Company Header */}
-                <div className="bg-gradient-to-r from-blue-900 to-blue-700 rounded-xl p-6 text-white">
-                  <div className="flex justify-between">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <Icons.Building className="w-5 h-5" />
-                        <span className="text-blue-200 text-sm">Meeting Review</span>
-                      </div>
-                      <h1 className="text-2xl font-bold">{selectedCompany.name}</h1>
-                      <p className="text-blue-200">{selectedCompany.ticker} • {selectedCompany.exchange}</p>
-                    </div>
-                    <div className="text-right text-sm">
-                      <div className="text-blue-200">Meeting Date</div>
-                      <div className="font-semibold">{selectedCompany.meetingDate}</div>
-                    </div>
-                  </div>
-                  {/* Progress dots */}
-                  <div className="flex items-center gap-2 mt-6 pt-4 border-t border-dragon-700">
-                    {proposals.map((p, i) => (
-                      <button key={p.id} onClick={() => setCurrentProposal(i)}
-                        className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium transition-all ${i === currentProposal ? 'bg-white text-blue-900' : p.hasIssues ? 'bg-red-500 text-white' : 'bg-dragon-700 text-blue-200 hover:bg-dragon-600'}`}>
-                        {i + 1}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Proposal Card */}
-                {(() => {
-                  const p = proposals[currentProposal];
-                  return (
-                    <div className="bg-white rounded-xl border overflow-hidden">
-                      <div className="px-6 py-4 border-b bg-gray-50">
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <div className="text-sm text-dragon-500">Proposal {p.id}</div>
-                            <h2 className="text-xl font-semibold">{p.matter}</h2>
-                          </div>
-                          <div className="flex gap-6">
-                            <div className="text-right">
-                              <div className="text-xs text-dragon-500">Board</div>
-                              <div className="font-medium">{p.board}</div>
-                            </div>
-                            <div className="text-right">
-                              <div className="text-xs text-dragon-500">DragonVOTE</div>
-                              <div className={`font-semibold ${p.recommendation === 'FOR' || p.recommendation === '1 YEAR' ? 'text-dragon-600' : p.recommendation === 'AGAINST' ? 'text-red-600' : 'text-yellow-600'}`}>
-                                {p.recommendation}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="p-6">
-                        {/* Directors */}
-                        {p.type === 'directors' && p.directors && (
-                          <div className="space-y-3">
-                            <div className="text-sm text-dragon-600 mb-4">{p.summary}</div>
-                            {p.directors.map((d, i) => (
-                              <div key={i} className={`p-4 rounded-lg border ${d.issues.length > 0 ? 'border-red-200 bg-red-50' : 'border-gray-100 bg-gray-50'}`}>
-                                <div className="flex justify-between items-start">
-                                  <div className="flex-1">
-                                    <div className="flex items-center gap-2">
-                                      <span className="font-medium">{d.name}</span>
-                                      {d.role && <span className="text-xs bg-blue-100 text-dragon-800 px-2 py-0.5 rounded">{d.role}</span>}
-                                      {!d.independent && <span className="text-xs bg-dragon-200 text-dragon-600 px-2 py-0.5 rounded">Non-Ind</span>}
-                                    </div>
-                                    <div className="text-sm text-dragon-500 mt-1">
-                                      Age {d.age} • {d.tenure}yr tenure • {d.otherBoards} other boards
-                                    </div>
-                                    {d.issues.length > 0 && (
-                                      <div className="mt-3 space-y-2">
-                                        {d.issues.map((issue, j) => (
-                                          <div key={j} className="bg-red-100 rounded p-2 text-sm">
-                                            <div className="flex items-start gap-2">
-                                              <Icons.AlertTriangle className="w-4 h-4 text-red-600 mt-0.5" />
-                                              <div>
-                                                <span className="font-medium text-red-800">{issue.rule}</span>
-                                                <span className="text-red-700"> — {issue.fact} (threshold: {issue.threshold})</span>
-                                              </div>
-                                            </div>
-                                          </div>
-                                        ))}
-                                      </div>
-                                    )}
-                                  </div>
-                                  <div className="flex gap-2 ml-4">
-                                    <button onClick={() => setVote(`${p.id}-${d.name}`, 'FOR')}
-                                      className={`px-4 py-2 rounded-lg text-sm font-medium ${votes[`${p.id}-${d.name}`] === 'FOR' ? 'bg-green-600 text-white' : 'bg-dragon-50 hover:bg-dragon-200'}`}>
-                                      FOR
-                                    </button>
-                                    <button onClick={() => setVote(`${p.id}-${d.name}`, 'AGAINST')}
-                                      className={`px-4 py-2 rounded-lg text-sm font-medium ${votes[`${p.id}-${d.name}`] === 'AGAINST' ? 'bg-red-600 text-white' : 'bg-dragon-50 hover:bg-dragon-200'}`}>
-                                      AGAINST
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-
-                        {/* Non-director proposals */}
-                        {p.type !== 'directors' && (
-                          <div className="space-y-4">
-                            {p.rationale && (
-                              <div className="bg-gray-50 rounded-lg p-4">
-                                <h4 className="text-sm font-semibold text-dragon-700 mb-2">Analysis</h4>
-                                <p className="text-sm text-dragon-600">{p.rationale}</p>
-                              </div>
-                            )}
-                            {p.issues?.length > 0 && (
-                              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                                <h4 className="text-sm font-semibold text-red-800 mb-2">Policy Concerns</h4>
-                                {p.issues.map((issue, i) => (
-                                  <div key={i} className="flex items-start gap-2 text-sm text-red-700">
-                                    <Icons.XCircle className="w-4 h-4 mt-0.5" />
-                                    <span><strong>{issue.rule}</strong>: {issue.fact} (threshold: {issue.threshold})</span>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-                            <div className="flex items-center justify-between pt-4 border-t">
-                              <span className="text-sm font-medium">Your Vote:</span>
-                              <div className="flex gap-2">
-                                {p.type === 'frequency' ? (
-                                  ['1 YEAR', '2 YEARS', '3 YEARS'].map(opt => (
-                                    <button key={opt} onClick={() => setVote(p.id, opt)}
-                                      className={`px-4 py-2 rounded-lg text-sm font-medium ${votes[p.id] === opt ? 'bg-dragon-700 text-white' : 'bg-dragon-50 hover:bg-dragon-200'}`}>
-                                      {opt}
-                                    </button>
-                                  ))
-                                ) : (
-                                  <>
-                                    <button onClick={() => setVote(p.id, 'FOR')}
-                                      className={`px-6 py-2 rounded-lg text-sm font-medium ${votes[p.id] === 'FOR' ? 'bg-green-600 text-white' : 'bg-dragon-50 hover:bg-dragon-200'}`}>
-                                      FOR
-                                    </button>
-                                    <button onClick={() => setVote(p.id, 'AGAINST')}
-                                      className={`px-6 py-2 rounded-lg text-sm font-medium ${votes[p.id] === 'AGAINST' ? 'bg-red-600 text-white' : 'bg-dragon-50 hover:bg-dragon-200'}`}>
-                                      AGAINST
-                                    </button>
-                                    <button onClick={() => setVote(p.id, 'ABSTAIN')}
-                                      className={`px-6 py-2 rounded-lg text-sm font-medium ${votes[p.id] === 'ABSTAIN' ? 'bg-gray-600 text-white' : 'bg-dragon-50 hover:bg-dragon-200'}`}>
-                                      ABSTAIN
-                                    </button>
-                                  </>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="px-6 py-3 bg-gray-50 border-t text-xs text-dragon-500 flex justify-between">
-                        <span>Policy: {policyName} {policyVersion}</span>
-                        <span>Generated: {new Date().toISOString()}</span>
-                      </div>
-                    </div>
-                  );
-                })()}
-
-                {/* Navigation */}
-                <div className="flex justify-between">
-                  <button onClick={() => setCurrentProposal(i => Math.max(0, i - 1))} disabled={currentProposal === 0}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium ${currentProposal === 0 ? 'bg-dragon-50 text-dragon-400 cursor-not-allowed' : 'bg-dragon-200 hover:bg-gray-300'}`}>
-                    <Icons.ArrowLeft className="w-5 h-5" /> Previous
-                  </button>
-                  <div className="flex gap-3">
-                    <button className="px-6 py-3 border rounded-lg font-medium hover:bg-dragon-50 flex items-center gap-2">
-                      <Icons.FileText className="w-5 h-5" /> Export Report
-                    </button>
-                    <button className="px-6 py-3 border rounded-lg font-medium hover:bg-dragon-50 flex items-center gap-2">
-                      <Icons.Download className="w-5 h-5" /> Vote Instructions
-                    </button>
-                  </div>
-                  {currentProposal < proposals.length - 1 ? (
-                    <button onClick={() => setCurrentProposal(i => i + 1)}
-                      className="flex items-center gap-2 px-6 py-3 bg-dragon-700 text-white rounded-lg font-medium hover:bg-dragon-800">
-                      Next <Icons.ArrowRight className="w-5 h-5" />
-                    </button>
-                  ) : (
-                    <button onClick={closeMeeting}
-                      className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700">
-                      <Icons.CheckCircle className="w-5 h-5" /> Complete Review
-                    </button>
-                  )}
-                </div>
-              </div>
-            )}
-          </main>
-        </div>
-      );
-    }
-
-    // Render
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-  </script>
+  // MEETING DETAIL
+  if(mode==='usage'&&selectedCompany){
+    const co=selectedCompany;const p=proposals[currentProposal];
+    const tabs=[{id:'proposals',label:'Proposals'},{id:'profile',label:'Company'},{id:'governance',label:'Governance'},{id:'ownership',label:'Ownership'},{id:'compensation',label:'Compensation'},{id:'auditor',label:'Auditor'},{id:'history',label:'Prior Votes'}];
+    return(
+      <div className="min-h-screen bg-dragon-50">
+        <header className="bg-white border-b sticky top-0 z-10"><div className="max-w-7xl mx-auto px-6 py-4"><div className="flex items-center justify-between"><div className="flex items-center gap-4"><button onClick={closeMeeting} className="p-2 text-dragon-600 hover:bg-dragon-100 rounded-lg"><I.ArrowLeft c="w-5 h-5"/></button><div><h1 className="text-xl font-bold text-dragon-900">{co.name}</h1><div className="flex items-center gap-3 text-sm text-dragon-500"><span>{co.ticker} • {co.exchange}</span><span>•</span><span className="flex items-center gap-1"><I.Calendar c="w-4 h-4"/>{co.meetingDate}</span></div></div></div><div className="flex items-center gap-3"><button className="px-4 py-2 border rounded-lg text-dragon-700 hover:bg-dragon-100 flex items-center gap-2"><I.Download c="w-4 h-4"/> Export PDF</button><button className="px-4 py-2 bg-dragon-700 text-white rounded-lg hover:bg-dragon-800 flex items-center gap-2"><I.Check c="w-4 h-4"/> Submit Votes</button></div></div><div className="flex gap-1 mt-4 -mb-px overflow-x-auto">{tabs.map(tab=><button key={tab.id} onClick={()=>setActiveTab(tab.id)} className={`px-4 py-2 text-sm font-medium border-b-2 ${activeTab===tab.id?'border-dragon-700 text-dragon-800':'border-transparent text-dragon-500 hover:text-dragon-700'}`}>{tab.label}</button>)}</div></div></header>
+        <div className="bg-white border-b"><div className="max-w-7xl mx-auto px-6 py-4"><div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">{[['Issued To',clientName],['Policy',policyName],['Record Date',co.recordDate],['Published',co.publishDate],['ISIN',co.isin]].map(([k,v],i)=><div key={i}><span className="text-dragon-500">{k}:</span><span className="ml-2 font-medium">{v}</span></div>)}</div></div></div>
+        <div className="bg-green-50 border-b border-green-200"><div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-4"><I.CheckCircle c="w-5 h-5 text-green-600"/><div className="text-sm"><span className="font-medium text-green-800">No Conflicts of Interest.</span><span className="text-green-700 ml-2">{co.engagement.conflictsNote}</span></div></div></div>
+        <main className="max-w-7xl mx-auto px-6 py-6">
+          {activeTab==='profile'&&<div className="space-y-6"><div className="bg-white rounded-xl border p-6"><h3 className="text-lg font-semibold mb-4">Company Description</h3><p className="text-dragon-700">{co.description}</p><div className="mt-4 flex flex-wrap gap-2">{co.indexMembership.map((idx,i)=><span key={i} className="px-2 py-1 bg-dragon-100 text-dragon-700 text-xs rounded">{idx}</span>)}</div></div><div className="grid grid-cols-2 md:grid-cols-4 gap-4">{[['Sector',co.sector],['Industry',co.industry],['HQ',co.headquarters],['Incorporated',co.stateOfIncorporation]].map(([k,v],i)=><div key={i} className="bg-white rounded-xl border p-4"><div className="text-sm text-dragon-500">{k}</div><div className="font-semibold text-sm">{v}</div></div>)}</div><div className="bg-white rounded-xl border p-6"><h3 className="text-lg font-semibold mb-4">Financial Overview</h3><div className="grid grid-cols-2 md:grid-cols-4 gap-6">{[['Market Cap',fmt(co.marketCap*1e6)],['EV',fmt(co.enterpriseValue*1e6)],['Revenue',fmt(co.revenue*1e6)],['Shares Out',co.sharesOutstanding.toFixed(1)+'M']].map(([k,v],i)=><div key={i}><div className="text-sm text-dragon-500">{k}</div><div className="text-xl font-bold">{v}</div></div>)}</div><div className="mt-6 pt-6 border-t grid grid-cols-3 gap-4">{[['1Y TSR',co.tsr1yr],['3Y TSR',co.tsr3yr],['5Y TSR',co.tsr5yr]].map(([k,v],i)=><div key={i} className="text-center p-3 bg-dragon-50 rounded-lg"><div className="text-sm text-dragon-500">{k}</div><div className={`text-lg font-bold ${v>=0?'text-green-600':'text-red-600'}`}>{v}%</div></div>)}</div></div></div>}
+          {activeTab==='governance'&&<div className="space-y-6"><div className="bg-white rounded-xl border p-6"><h3 className="text-lg font-semibold mb-4">Corporate Governance</h3><div className="grid grid-cols-2 md:grid-cols-3 gap-4">{[['Election',co.electionMethod],['Independence',co.boardIndependence+'%'],['Avg Tenure',co.avgNEDTenure+' yrs'],['Gender Div',co.genderDiversity+'%'],['Ethnic Div',co.ethnicDiversity+'%'],['CEO Since',co.compensation.ceoStartDate]].map(([k,v],i)=><div key={i} className="p-3 bg-gray-50 rounded-lg"><div className="text-xs text-dragon-500">{k}</div><div className="font-semibold">{v}</div></div>)}</div><div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">{[['Indep Chair',!co.combinedChairCEO,true],['Staggered Board',co.staggeredBoard,false],['Poison Pill',co.poisonPill,false],['Proxy Access',co.allowsProxyAccess,true],['Multi-Class',co.multiClassVoting,false],['Controlled',co.controlledCompany,false]].map(([l,v,g],i)=><div key={i} className={`p-3 rounded-lg flex items-center justify-between ${v===g?'bg-green-50':'bg-red-50'}`}><span className="text-sm">{l}</span><span className={`font-semibold ${v===g?'text-green-600':'text-red-600'}`}>{v?'Yes':'No'}</span></div>)}</div></div></div>}
+          {activeTab==='ownership'&&<div className="space-y-6"><div className="bg-white rounded-xl border p-6"><h3 className="text-lg font-semibold mb-4">Share Breakdown</h3><div className="grid grid-cols-2 md:grid-cols-3 gap-4">{[['Class',co.shareClass],['Votes/Share',co.votesPerShare],['Inside Own',co.insideOwnership+'%'],['Strategic',co.strategicOwners+'%'],['Free Float',co.freeFloat+'%']].map(([k,v],i)=><div key={i} className="p-4 bg-gray-50 rounded-lg"><div className="text-sm text-dragon-500">{k}</div><div className="font-semibold">{v}</div></div>)}</div></div><div className="bg-white rounded-xl border p-6"><h3 className="text-lg font-semibold mb-4">Top 10 Shareholders</h3><table className="w-full text-sm"><thead><tr className="border-b bg-gray-50"><th className="text-left py-3 px-3">#</th><th className="text-left py-3 px-3">Holder</th><th className="text-right py-3 px-3">Owned</th><th className="text-left py-3 px-3">Country</th></tr></thead><tbody>{co.topShareholders.map((h,i)=><tr key={i} className="border-b hover:bg-gray-50"><td className="py-3 px-3 text-dragon-500">{i+1}</td><td className="py-3 px-3 font-medium">{h.name}</td><td className="py-3 px-3 text-right font-semibold">{h.pct.toFixed(2)}%</td><td className="py-3 px-3 text-dragon-600">{h.country}</td></tr>)}</tbody></table></div></div>}
+          {activeTab==='compensation'&&<div className="space-y-6"><div className="bg-white rounded-xl border p-6"><div className="flex items-center justify-between mb-4"><h3 className="text-lg font-semibold">Pay-for-Performance</h3><div className={`text-3xl font-bold ${co.compensation.pfpGrade==='D'?'text-orange-600':'text-green-600'}`}>Grade: {co.compensation.pfpGrade}</div></div><div className="grid grid-cols-3 gap-4">{Object.entries(co.compensation.pfpGradeHistory).map(([y,g])=><div key={y} className="text-center p-3 bg-gray-50 rounded-lg"><div className="text-sm text-dragon-500">FY {y}</div><div className={`text-xl font-bold ${g==='D'?'text-orange-600':g==='C'?'text-yellow-600':'text-green-600'}`}>{g}</div></div>)}</div></div><div className="bg-white rounded-xl border p-6"><h3 className="text-lg font-semibold mb-4">CEO: {co.compensation.ceoName}</h3><div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">{[['Total Comp',fmt(co.compensation.totalComp)],['YoY Change',co.compensation.yoyChange+'%'],['CEO:Median',co.compensation.ceoToMedianRatio+':1'],['Prior SoP',co.compensation.priorSopSupport+'%']].map(([k,v],i)=><div key={i} className="p-4 bg-dragon-50 rounded-lg"><div className="text-sm text-dragon-500">{k}</div><div className="text-xl font-bold">{v}</div></div>)}</div><h4 className="font-semibold mb-3">Breakdown</h4><div className="space-y-2">{[['Salary',co.compensation.salary],['Bonus',co.compensation.bonus],['Equity',co.compensation.equity],['Other',co.compensation.other]].map(([k,v],i)=><div key={i} className="flex items-center"><div className="w-20 text-sm text-dragon-600">{k}</div><div className="flex-1 mx-4 h-5 bg-gray-200 rounded-full overflow-hidden"><div className="h-full bg-dragon-500 rounded-full" style={{width:`${v/co.compensation.totalComp*100}%`}}/></div><div className="w-20 text-right font-semibold">{fmt(v)}</div></div>)}</div></div><div className="bg-white rounded-xl border p-6"><h3 className="text-lg font-semibold mb-4">Risk-Mitigating Policies</h3><div className="grid grid-cols-2 md:grid-cols-3 gap-3">{[['Clawback',co.compensation.clawbackPolicy],['Anti-Hedging',co.compensation.antiHedgingPolicy],['Stock Guidelines',co.compensation.stockOwnershipGuidelines],['Single-Trigger CIC',!co.compensation.singleTriggerCIC],['Excise Gross-Ups',!co.compensation.exciseTaxGrossUps]].map(([k,v],i)=><div key={i} className={`p-3 rounded-lg flex items-center justify-between ${v?'bg-green-50':'bg-red-50'}`}><span className="text-sm">{k}</span><span className={`font-semibold ${v?'text-green-600':'text-red-600'}`}>{v?'Yes':'No'}</span></div>)}</div></div></div>}
+          {activeTab==='auditor'&&<div className="space-y-6"><div className="bg-white rounded-xl border p-6"><h3 className="text-lg font-semibold mb-4">Auditor Information</h3><div className="grid grid-cols-2 md:grid-cols-4 gap-4">{[['Auditor',co.auditor.name],['Tenure',co.auditor.tenure+' years'],['Opinion',co.auditor.opinion],['Prior Vote',co.auditor.priorYearVote+'%']].map(([k,v],i)=><div key={i} className="p-4 bg-gray-50 rounded-lg"><div className="text-sm text-dragon-500">{k}</div><div className="font-semibold">{v}</div></div>)}</div><div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-3">{[['Restatement',!co.auditor.restatement],['Material Weakness',!co.auditor.materialWeakness]].map(([k,v],i)=><div key={i} className={`p-3 rounded-lg flex items-center justify-between ${v?'bg-green-50':'bg-red-50'}`}><span className="text-sm">{k}</span><span className={`font-semibold ${v?'text-green-600':'text-red-600'}`}>{v?'None':'Yes'}</span></div>)}<div className="p-3 bg-gray-50 rounded-lg"><span className="text-sm text-dragon-500">Lead Partner:</span><span className="ml-2 font-semibold">{co.auditor.leadPartner}</span></div></div></div><div className="bg-white rounded-xl border p-6"><h3 className="text-lg font-semibold mb-4">Auditor Fees</h3><table className="w-full text-sm"><thead><tr className="border-b bg-gray-50"><th className="text-left py-3 px-3">Type</th><th className="text-right py-3 px-3">Current</th><th className="text-right py-3 px-3">Prior</th><th className="text-right py-3 px-3">% of Total</th></tr></thead><tbody>{[['Audit',co.auditor.fees.audit,co.auditor.priorFees.audit],['Audit-Related',co.auditor.fees.auditRelated,co.auditor.priorFees.auditRelated],['Tax',co.auditor.fees.tax,co.auditor.priorFees.tax],['Other',co.auditor.fees.other,co.auditor.priorFees.other],['Total',co.auditor.fees.total,co.auditor.priorFees.total]].map(([k,c,p],i)=><tr key={i} className={i===4?'bg-gray-50 font-semibold':'border-b'}><td className="py-3 px-3">{k}</td><td className="py-3 px-3 text-right">{fmt(c)}</td><td className="py-3 px-3 text-right text-dragon-500">{fmt(p)}</td><td className="py-3 px-3 text-right">{(c/co.auditor.fees.total*100).toFixed(1)}%</td></tr>)}</tbody></table><div className="mt-4 p-4 bg-dragon-50 rounded-lg"><div className="text-sm text-dragon-500">Non-Audit Fee Ratio</div><div className="text-xl font-bold">{((co.auditor.fees.auditRelated+co.auditor.fees.tax+co.auditor.fees.other)/co.auditor.fees.total*100).toFixed(1)}%</div></div></div></div>}
+          {activeTab==='history'&&<div className="bg-white rounded-xl border p-6"><h3 className="text-lg font-semibold mb-4">Prior Year Vote Results</h3><table className="w-full text-sm"><thead><tr className="border-b bg-gray-50"><th className="text-left py-3 px-3">Proposal</th><th className="text-right py-3 px-3">For</th><th className="text-center py-3 px-3">Result</th></tr></thead><tbody>{co.priorVoteResults.map((v,i)=><tr key={i} className="border-b hover:bg-gray-50"><td className="py-3 px-3">{v.proposal}</td><td className="py-3 px-3 text-right font-semibold text-green-600">{v.forPct.toFixed(2)}%</td><td className="py-3 px-3 text-center"><span className={`px-2 py-1 rounded text-xs font-medium ${v.forPct>50?'bg-green-100 text-green-800':'bg-red-100 text-red-800'}`}>{v.forPct>50?'Passed':'Failed'}</span></td></tr>)}</tbody></table></div>}
+          {activeTab==='proposals'&&<div className="grid lg:grid-cols-3 gap-6"><div className="lg:col-span-1 space-y-3"><h3 className="font-semibold mb-3">Agenda Items</h3>{proposals.map((pr,i)=><div key={pr.id} onClick={()=>setCurrentProposal(i)} className={`bg-white rounded-lg border p-4 cursor-pointer ${currentProposal===i?'border-dragon-500 shadow-md':'border-dragon-100 hover:border-dragon-300'}`}><div className="flex items-start justify-between"><div className="flex-1"><div className="text-xs text-dragon-500 mb-1">Item {pr.id}</div><div className="font-medium text-dragon-900 text-sm">{pr.matter}</div></div><div className={`px-2 py-1 rounded text-xs font-medium ${pr.rec==='FOR'||pr.rec==='1 YEAR'?'bg-green-100 text-green-700':pr.rec==='AGAINST'?'bg-red-100 text-red-700':'bg-yellow-100 text-yellow-700'}`}>{pr.rec}</div></div>{pr.hasIssues&&<div className="mt-2 flex items-center gap-1 text-xs text-amber-600"><I.Alert c="w-3 h-3"/> Policy concerns</div>}</div>)}</div><div className="lg:col-span-2">{p&&<div className="bg-white rounded-xl border p-6"><div className="flex items-start justify-between mb-6"><div><div className="text-sm text-dragon-500 mb-1">Item {p.id}</div><h2 className="text-xl font-bold text-dragon-900">{p.matter}</h2><div className="text-sm text-dragon-500 mt-1">Board: <span className="font-medium">{p.board}</span></div></div><div className={`px-4 py-2 rounded-lg font-semibold ${p.rec==='FOR'||p.rec==='1 YEAR'?'bg-green-100 text-green-700':p.rec==='AGAINST'?'bg-red-100 text-red-700':'bg-yellow-100 text-yellow-700'}`}>DragonVOTE: {p.rec}</div></div>{p.directors?<div><table className="w-full text-sm"><thead><tr className="border-b bg-gray-50"><th className="text-left py-2 px-2">Director</th><th className="text-center py-2 px-2">Age</th><th className="text-center py-2 px-2">Tenure</th><th className="text-center py-2 px-2">Ind</th><th className="text-center py-2 px-2">Other Bds</th><th className="text-center py-2 px-2">Vote</th></tr></thead><tbody>{p.directors.map(d=><tr key={d.name} className={`border-b ${d.issues.length>0?'bg-red-50':''}`}><td className="py-2 px-2"><div className="font-medium">{d.name}</div>{d.role&&<div className="text-xs text-dragon-500">{d.role}</div>}</td><td className="py-2 px-2 text-center">{d.age}</td><td className="py-2 px-2 text-center">{d.tenure}yr</td><td className="py-2 px-2 text-center">{d.independent?'✓':'✗'}</td><td className="py-2 px-2 text-center">{d.otherBoards}</td><td className="py-2 px-2 text-center"><select value={votes[`${p.id}-${d.name}`]||d.rec} onChange={e=>setVote(`${p.id}-${d.name}`,e.target.value)} className={`px-2 py-1 rounded border text-sm font-medium ${(votes[`${p.id}-${d.name}`]||d.rec)==='FOR'?'bg-green-50 border-green-200 text-green-700':'bg-red-50 border-red-200 text-red-700'}`}><option value="FOR">FOR</option><option value="AGAINST">AGAINST</option><option value="ABSTAIN">ABSTAIN</option></select></td></tr>)}</tbody></table>{p.directors.some(d=>d.issues.length>0)&&<div className="mt-4 p-4 bg-amber-50 rounded-lg border border-amber-200"><h4 className="font-semibold text-amber-800 flex items-center gap-2 mb-2"><I.Alert c="w-4 h-4"/> Policy Concerns</h4><ul className="space-y-1 text-sm">{p.directors.filter(d=>d.issues.length>0).map(d=><li key={d.name}><span className="font-medium text-amber-900">{d.name}:</span>{d.issues.map((iss,i)=><span key={i} className="ml-2 text-amber-700">{iss.rule} ({iss.fact})</span>)}</li>)}</ul></div>}</div>:<div><div className="mb-6"><h3 className="font-semibold mb-2">Analysis</h3><p className="text-dragon-700">{p.rationale}</p></div>{p.boardPerspective&&<div className="mb-6 p-4 bg-gray-50 rounded-lg"><h4 className="font-semibold text-dragon-800 mb-2">Board's Perspective</h4><p className="text-dragon-600 text-sm">{p.boardPerspective}</p></div>}{p.proponentPerspective&&<div className="mb-6 p-4 bg-blue-50 rounded-lg"><h4 className="font-semibold text-blue-800 mb-2">Proponent ({p.proponent})</h4><p className="text-blue-700 text-sm">{p.proponentPerspective}</p></div>}{p.issues&&p.issues.length>0&&<div className="mb-6 p-4 bg-amber-50 rounded-lg border border-amber-200"><h4 className="font-semibold text-amber-800 flex items-center gap-2 mb-2"><I.Alert c="w-4 h-4"/> Policy Concerns</h4><ul className="space-y-1 text-sm text-amber-700">{p.issues.map((iss,i)=><li key={i}>{iss.rule}: {iss.fact}</li>)}</ul></div>}<div className="border-t pt-6"><h3 className="font-semibold mb-3">Your Vote</h3><div className="flex gap-3">{(p.type==='frequency'?['1 YEAR','2 YEARS','3 YEARS','ABSTAIN']:['FOR','AGAINST','ABSTAIN']).map(opt=><button key={opt} onClick={()=>setVote(p.id,opt)} className={`px-6 py-3 rounded-lg font-medium ${votes[p.id]===opt?opt==='FOR'||opt==='1 YEAR'?'bg-green-600 text-white':opt==='AGAINST'?'bg-red-600 text-white':'bg-gray-600 text-white':'bg-gray-100 text-dragon-700 hover:bg-gray-200'}`}>{opt}</button>)}</div></div></div>}</div>}</div></div>}
+        </main>
+      </div>
+    );
+  }
+  return null;
+}
+ReactDOM.render(<App/>,document.getElementById('root'));
+</script>
 </body>
 </html>
