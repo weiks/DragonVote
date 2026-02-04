@@ -1,225 +1,701 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DragonVOTE - Principles-Based Proxy Voting</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>tailwind.config={theme:{extend:{colors:{dragon:{50:'#f0f7f7',100:'#d9ebeb',200:'#b3d7d7',300:'#8dc3c3',400:'#5a9e9e',500:'#3d7a7a',600:'#2d5c5c',700:'#1f4545',800:'#1a3a3a',900:'#14302f'}}}}}</script>
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    body { font-family: system-ui, -apple-system, sans-serif; }
+    @media print { .no-print { display: none; } }
+  </style>
 </head>
-<body class="bg-dragon-50 font-sans">
-<div id="root"></div>
-<script type="text/babel">
-const {useState}=React;
-const I={ChevronRight:({c})=><svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7"/></svg>,ChevronLeft:({c})=><svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7"/></svg>,Check:({c})=><svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"/></svg>,Alert:({c})=><svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>,CheckCircle:({c})=><svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>,Calendar:({c})=><svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>,Upload:({c})=><svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>,Download:({c})=><svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>,ArrowRight:({c})=><svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>,ArrowLeft:({c})=><svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>,Info:({c})=><svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>,Settings:({c})=><svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>,Bell:({c})=><svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>,Filter:({c})=><svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>,Dragon:({c})=><svg className={c} viewBox="0 0 100 80" fill="currentColor"><path d="M85 15c-5-8-15-12-25-10-3-4-8-5-13-3-8-4-18-2-24 5-10 2-18 10-20 20-3 8 0 17 7 22l5 3c-2 5-1 11 3 15 5 5 13 6 19 2l8 6c8 5 19 3 25-5 4-5 5-12 3-18 8-5 13-15 12-25 0-5-1-9-3-12h3zm-50 45c-3 0-5-2-5-5s2-5 5-5 5 2 5 5-2 5-5 5z"/></svg>};
+<body class="bg-gray-100">
+  <div id="root"></div>
 
-// EXPANDED SAMPLE DATA (from Glass Lewis report)
-const SAMPLE={
-  id:'sampl',name:'Sample Company Inc.',ticker:'SAMPL',exchange:'NASDAQ',isin:'USQIC1234567',
-  meetingDate:'March 23, 2025',recordDate:'March 3, 2025',publishDate:'February 16, 2025',voteDeadline:'March 21, 2025',
-  description:'Sample Company Inc. designs, manufactures, and markets consumer electronics, computer software, and online services worldwide.',
-  sector:'Information Technology',industry:'Technology Hardware, Storage & Peripherals',
-  stateOfIncorporation:'Delaware',headquarters:'California',
-  indexMembership:['DOW JONES','NASDAQ COMPOSITE','S&P 500','NASDAQ-100','RUSSELL 1000'],
-  marketCap:2518523,enterpriseValue:2826357,revenue:384338,sharesOutstanding:15821.9,
-  tsr1yr:3.1,tsr3yr:40.4,tsr5yr:32.1,
-  shareClass:'Common Stock',votesPerShare:1,insideOwnership:0.10,strategicOwners:5.80,freeFloat:99.90,
-  boardIndependence:89,electionMethod:'Majority',controlledCompany:false,multiClassVoting:false,
-  staggeredBoard:false,combinedChairCEO:false,allowsProxyAccess:true,virtualOnlyMeeting:true,
-  poisonPill:false,avgNEDTenure:11,genderDiversity:33.3,ethnicDiversity:33.3,
-  specialMeetingThreshold:10.0,writtenConsentThreshold:50.0,
-  topShareholders:[
-    {name:'The Vanguard Group, Inc.',pct:9.00,country:'United States',type:'Traditional Investment Manager'},
-    {name:'BlackRock, Inc.',pct:5.25,country:'United States',type:'Traditional Investment Manager'},
-    {name:'Berkshire Hathaway Inc.',pct:4.76,country:'United States',type:'Public Company'},
-    {name:'State Street Global Advisors',pct:4.54,country:'United States',type:'Traditional Investment Manager'},
-    {name:'FMR LLC',pct:2.16,country:'United States',type:'Traditional Investment Manager'},
-    {name:'Geode Capital Management',pct:1.87,country:'United States',type:'Traditional Investment Manager'},
-    {name:'T. Rowe Price Group',pct:1.42,country:'United States',type:'Traditional Investment Manager'},
-    {name:'Northern Trust Global',pct:1.11,country:'United Kingdom',type:'Traditional Investment Manager'},
-    {name:'Norges Bank Investment',pct:1.04,country:'Norway',type:'Government Pension Plan'},
-    {name:'BNY Mellon Asset Mgmt',pct:0.86,country:'United States',type:'Traditional Investment Manager'},
-  ],
-  directors:[
-    {name:'Charlene M. Jameson',age:55,gender:'F',diverse:false,independent:false,tenure:8,committees:['CEO'],otherBoards:1,otherBoardNames:['Associated British Foods'],role:'CEO',attendance:true},
-    {name:'Gary J. Albert',age:72,gender:'M',diverse:false,independent:true,tenure:19,committees:['Audit (Chair)'],otherBoards:0,otherBoardNames:[],attendance:true},
-    {name:'Jacintha Andrews',age:61,gender:'F',diverse:false,independent:true,tenure:14,committees:['Comp (Chair)'],otherBoards:1,otherBoardNames:['Genus plc'],attendance:true},
-    {name:'Levi S. Artur',age:62,gender:'M',diverse:false,independent:true,tenure:21,committees:['Gov (Chair)'],otherBoards:0,otherBoardNames:[],role:'Chair',attendance:true},
-    {name:'Ragnar S. Didrikson',age:71,gender:'M',diverse:false,independent:true,tenure:12,committees:['Audit'],otherBoards:1,otherBoardNames:['Unilever plc'],attendance:true},
-    {name:'Alexis Gorman',age:58,gender:'M',diverse:false,independent:true,tenure:2,committees:['Nom (Chair)'],otherBoards:0,otherBoardNames:[],attendance:true},
-    {name:'Sarah W. Loris',age:64,gender:'F',diverse:false,independent:true,tenure:9,committees:['Audit','Nom'],otherBoards:1,otherBoardNames:['Credit Suisse'],attendance:true},
-    {name:'Jennifer C. Ribeiro',age:76,gender:'F',diverse:true,independent:true,tenure:4,committees:['Audit'],otherBoards:1,otherBoardNames:['HSBC Holdings'],attendance:true},
-    {name:'Boris A. Ring',age:64,gender:'M',diverse:true,independent:true,tenure:7,committees:[],otherBoards:1,otherBoardNames:['Informa plc'],attendance:true}
-  ],
-  compensation:{
-    ceoName:'Charlene M. Jameson',ceoStartDate:'August 2015',
-    totalComp:19420097,salary:3000000,bonus:12000000,equity:3000015,other:1420082,
-    pfpGrade:'D',pfpGradeHistory:{2024:'D',2023:'C',2022:'B'},
-    priorSopSupport:64,yoyChange:1,ceoToMedianRatio:1177,
-    structureRating:'Fair',disclosureRating:'Fair',
-    clawbackPolicy:true,clawbackExpanded:true,antiHedgingPolicy:true,stockOwnershipGuidelines:true,
-    singleTriggerCIC:false,exciseTaxGrossUps:false,cicEquityTreatment:'Double-trigger acceleration',
-  },
-  auditor:{
-    name:'PricewaterhouseCoopers LLP',tenure:14,opinion:'Unqualified',priorYearVote:98.5,
-    leadPartner:'Ash K. Frank',restatement:false,materialWeakness:false,
-    fees:{audit:18763884,auditRelated:1581423,tax:3489482,other:142510,total:23977299},
-    priorFees:{audit:16883123,auditRelated:1361408,tax:4762997,other:625310,total:23632838},
-    feeChange1yr:1.5
-  },
-  priorVoteResults:[
-    {proposal:'Elect Charlene Jameson',forPct:98.87},{proposal:'Elect Boris Ring',forPct:97.97},
-    {proposal:'Elect Gary Albert',forPct:91.41},{proposal:'Elect Alexis Gorman',forPct:92.29},
-    {proposal:'Elect Jacintha Andrews',forPct:88.93},{proposal:'Elect Levi Artur',forPct:92.47},
-    {proposal:'Elect Jennifer Ribeiro',forPct:98.93},{proposal:'Elect Ragnar Didrikson',forPct:88.79},
-    {proposal:'Elect Sarah Loris',forPct:96.33},{proposal:'Ratification of Auditor',forPct:98.55},
-    {proposal:'Advisory Vote on Executive Compensation',forPct:64.02},
-    {proposal:'SH Proposal: Civil Rights Audit',forPct:53.55},{proposal:'SH Proposal: Concealment Clauses',forPct:50.04},
-  ],
-  engagement:{hasConflicts:false,conflictsNote:'None. DragonVOTE does not provide advisory services to issuers.'},
-  status:'ready'
-};
+  <script type="text/babel">
+    const { useState } = React;
 
-const TEMPLATES={
-  shareholderValue:{id:'shareholderValue',name:'Shareholder Value Focus',shortDesc:'Balanced approach prioritizing long-term returns',
-    text:`We vote proxies in the best interest of our clients with a focus on long-term shareholder value. We believe boards should be substantially independent with at least two-thirds of directors meeting independence standards. We are concerned when directors have served for more than fifteen years. Directors should not serve on more than four public company boards.\n\nWe expect executive compensation aligned with company performance. We will vote against say-on-pay when pay-for-performance alignment is poor or when companies fail to respond to prior votes receiving less than seventy percent support.\n\nWe support annual say-on-pay votes and expect auditors to maintain independence with non-audit fees not exceeding twenty-five percent of total fees.`,
-    defaultRules:{boardIndependence:67,tenureConcern:15,overboardingLimit:4,pfpGrade:'C',priorSopThreshold:70,nonAuditFeeRatio:25}},
-  governanceLeader:{id:'governanceLeader',name:'Governance Leader',shortDesc:'Rigorous standards for board excellence',
-    text:`We hold boards to a high standard, requiring at least seventy-five percent independence and tenure limits of twelve years. Directors should limit outside commitments to three public boards.\n\nOn compensation, we oppose say-on-pay when the pay-for-performance grade falls below B or when prior support was below eighty percent without remediation.\n\nWe actively support shareholder proposals that enhance governance. We require auditors to maintain strict independence with non-audit fees not exceeding twenty percent of total fees.`,
-    defaultRules:{boardIndependence:75,tenureConcern:12,overboardingLimit:3,pfpGrade:'B',priorSopThreshold:80,nonAuditFeeRatio:20}},
-  balancedStewardship:{id:'balancedStewardship',name:'Balanced Stewardship',shortDesc:'Pragmatic approach with management deference',
-    text:`We balance shareholder interests with practical business considerations. We expect a majority of the board to be independent and become concerned when tenure exceeds twenty years. Directors may serve on up to five public boards.\n\nWe vote against say-on-pay only when pay-for-performance is significantly misaligned (grade D or F) or when companies ignore feedback after votes below sixty percent support.\n\nWe support annual say-on-pay and standard auditor independence thresholds of thirty percent for non-audit fees.`,
-    defaultRules:{boardIndependence:50,tenureConcern:20,overboardingLimit:5,pfpGrade:'D',priorSopThreshold:60,nonAuditFeeRatio:30}}
-};
+    // Icons
+    const Icons = {
+      ChevronRight: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7"/></svg>,
+      ChevronLeft: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7"/></svg>,
+      Check: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"/></svg>,
+      AlertTriangle: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>,
+      CheckCircle: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>,
+      XCircle: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>,
+      Calendar: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>,
+      Upload: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>,
+      Download: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>,
+      FileText: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>,
+      ArrowRight: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>,
+      ArrowLeft: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>,
+      Users: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>,
+      DollarSign: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>,
+      Scale: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>,
+      Building: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>,
+      Vote: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>,
+      Settings: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>,
+      Bell: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>,
+      Filter: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>,
+      Edit: ({className}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>,
+    };
 
-const PORTFOLIO=[
-  {...SAMPLE,proposalCount:9,concernCount:3},
-  {id:'apex',name:'Apex Technologies Corp.',ticker:'APEX',exchange:'NYSE',meetingDate:'March 28, 2025',voteDeadline:'March 26, 2025',sector:'Software',status:'ready',proposalCount:4,concernCount:1},
-  {id:'sumf',name:'Summit Financial Group',ticker:'SUMF',exchange:'NYSE',meetingDate:'April 5, 2025',voteDeadline:'April 3, 2025',sector:'Financials',status:'pending',proposalCount:6,concernCount:0},
-  {id:'prhl',name:'Pacific Retail Holdings',ticker:'PRHL',exchange:'NASDAQ',meetingDate:'April 12, 2025',voteDeadline:'April 10, 2025',sector:'Consumer',status:'pending',proposalCount:5,concernCount:2},
-  {id:'nrgy',name:'Northern Energy Partners',ticker:'NRGY',exchange:'NYSE',meetingDate:'April 18, 2025',voteDeadline:'April 16, 2025',sector:'Energy',status:'not_filed'}
-];
+    // XYZ Company Data (from deck)
+    const XYZ_COMPANY = {
+      name: 'XYZ Inc.', ticker: 'XYZ', exchange: 'Nasdaq',
+      meetingDate: 'April 1, 2026', recordDate: 'March 1, 2026', reportDate: 'March 5, 2026',
+      sector: 'Information Technology', industry: 'Hardware',
+      incorporation: 'Delaware', headquarters: 'Texas',
+      clientName: 'ABC Investment Management',
+      indices: ['DJIA', 'Nasdaq Composite', 'S&P 500', 'Russell 1000'],
+      ownership: { neos: 3.52, nonExecDirectors: 1.65, thirteenD: 0.00,
+        thirteenG: [{ name: 'BlackRock', pct: 8.18 }, { name: 'State Street', pct: 7.50 }, { name: 'Vanguard', pct: 6.23 }]
+      },
+      largestHolders: [
+        { rank: 1, name: 'BlackRock', pct: 8.18 }, { rank: 2, name: 'State Street', pct: 7.50 },
+        { rank: 3, name: 'Vanguard', pct: 6.23 }, { rank: 4, name: 'FMR (Fidelity)', pct: 4.90 },
+        { rank: 5, name: 'T. Rowe Price', pct: 4.90 }, { rank: 6, name: 'BNY Mellon', pct: 4.90 },
+      ],
+      dualClass: {
+        classes: [
+          { name: 'Class A', heldBy: 'Public', votesPerShare: 1, totalVote: 66.6, economicInterest: 90.0 },
+          { name: 'Class B', heldBy: 'Founders', votesPerShare: 10, totalVote: 33.3, economicInterest: 10.0 },
+        ]
+      },
+      financials: {
+        marketCap: 234078.5, closingPrice: 252.44, high52: 265.72, low52: 162.62, sharesOut: 927.26,
+        tsr: { y1: 39.12, y3: 23.29, y5: 16.74 },
+        gicsTsr: { y1: 3.68, y3: -10.50, y5: 9.03 },
+        spTsr: { y1: 25.02, y3: 8.94, y5: 14.53 },
+      },
+      governance: {
+        chairClassification: 'Executive Director', separateChairCEO: false, independentLead: true,
+        votingStandard: 'Majority', avgAge: 65, avgTenure: 7, pctWomen: 23, pctIndependent: 92,
+        proxyAccess: true, proxyAccessOwn: 3, proxyAccessTime: 3, poisonPill: false,
+      },
+      directors: [
+        { item: '1a', name: 'Arvind Krishna', role: 'CEO, Chair', ind: 'Exec', age: 62, tenure: 5, gender: 'M' },
+        { item: '1b', name: 'Alex Gorsky', role: 'Lead Dir', ind: 'Ind.', age: 64, tenure: 10, gender: 'M' },
+        { item: '1c', name: 'David Farr', role: 'Audit Chair', ind: 'Ind.', age: 70, tenure: 13, gender: 'M', flag: true },
+        { item: '1d', name: 'Andrew Liveris', role: 'Comp Chair', ind: 'Ind.', age: 70, tenure: 15, gender: 'M', flag: true },
+        { item: '1e', name: 'Michelle Howard', role: '', ind: 'Ind.', age: 64, tenure: 6, gender: 'F' },
+        { item: '1f', name: 'Martha Pollack', role: '', ind: 'Ind.', age: 66, tenure: 6, gender: 'F' },
+      ],
+      compensation: {
+        ceo: { name: 'A. Krishna', total: 25047, salary: 1500, bonus: 3850, stock: 16140, options: 3091 },
+        peerMedian: 22852, ceoPayRatio: 518,
+      },
+      auditor: { name: 'PricewaterhouseCoopers LLP', since: 1958, opinion: 'Unqualified',
+        fees: { total: 72600, audit: 48200, nonAudit: 1200, nonAuditPct: 1.7 }
+      },
+      priorResults: [
+        { prop: '1a Elect Marianne Brown', board: 'For', iss: 'For', result: 'Pass', support: 98.0 },
+        { prop: '1g Elect Andrew Liveris', board: 'For', iss: 'For', result: 'Pass', support: 78.2 },
+        { prop: '2 Ratify Auditor', board: 'For', iss: 'For', result: 'Pass', support: 93.5 },
+        { prop: '3 Say-on-Pay', board: 'For', iss: 'For', result: 'Pass', support: 91.1 },
+        { prop: '4 Lobbying Report', board: 'Against', iss: 'For', result: 'Fail', support: 37.1 },
+        { prop: '6 Written Consent', board: 'Against', iss: 'For', result: 'Fail', support: 42.4 },
+      ],
+      updates: [
+        { title: 'ACQUISITION OF HASHICORP', text: 'On February 27, 2025, the Company completed its acquisition of HashiCorp for $35 per share, representing $6.4 billion enterprise value.' },
+        { title: 'ENDICOTT SUIT', text: 'The Village of Endicott is suing the Company for environmental contamination that led to the closing of drinking wells.' },
+      ],
+    };
 
-const fmt=(n)=>{if(n>=1e9)return'$'+(n/1e9).toFixed(1)+'B';if(n>=1e6)return'$'+(n/1e6).toFixed(1)+'M';if(n>=1e3)return'$'+(n/1e3).toFixed(0)+'K';return'$'+n.toLocaleString();};
-const numWords={'fifty':50,'sixty':60,'two-thirds':67,'seventy':70,'seventy-five':75,'eighty':80,'majority':50,'ten':10,'twelve':12,'fifteen':15,'twenty':20,'twenty-five':25,'thirty':30,'three':3,'four':4,'five':5};
-const parsePolicy=(text)=>{
-  const r={boardIndependence:67,tenureConcern:15,overboardingLimit:4,pfpGrade:'C',priorSopThreshold:70,nonAuditFeeRatio:25};
-  const im=text.match(/(?:at least |requiring )?([\w-]+)(?:\s*percent| percent)/i);if(im&&numWords[im[1].toLowerCase()])r.boardIndependence=numWords[im[1].toLowerCase()];
-  const tm=text.match(/(?:more than|exceeds?|limits? of)\s*([\w-]+)\s*years/i);if(tm&&numWords[tm[1].toLowerCase()])r.tenureConcern=numWords[tm[1].toLowerCase()];
-  const bm=text.match(/(?:more than|up to)\s*([\w-]+)\s*(?:public\s*)?boards/i);if(bm&&numWords[bm[1].toLowerCase()])r.overboardingLimit=numWords[bm[1].toLowerCase()];
-  if(text.includes('grade of D or F')||text.includes('significantly misaligned'))r.pfpGrade='D';else if(text.includes('falls below B'))r.pfpGrade='B';else if(text.includes('poor'))r.pfpGrade='C';
-  const sm=text.match(/(?:less than|below)\s*([\w-]+)\s*percent\s*support/i);if(sm&&numWords[sm[1].toLowerCase()])r.priorSopThreshold=numWords[sm[1].toLowerCase()];
-  const fm=text.match(/non-audit fees[^.]*?([\w-]+)\s*percent/i);if(fm&&numWords[fm[1].toLowerCase()])r.nonAuditFeeRatio=numWords[fm[1].toLowerCase()];
-  return r;
-};
+    // Ballot items matching deck
+    const BALLOT = [
+      { id: '1a', matter: '~ CEO', type: 'director', board: 'For', dragon: 'For', reason: '' },
+      { id: '1b', matter: '~ Audit chair', type: 'director', board: 'For', dragon: 'For', reason: '' },
+      { id: '1c', matter: '~ Compensation chair', type: 'director', board: 'For', dragon: 'Against', reason: 'See below' },
+      { id: '1d', matter: '~ Governance chair', type: 'director', board: 'For', dragon: 'For', reason: '' },
+      { id: '1e', matter: '~ Ordinary director 1', type: 'director', board: 'For', dragon: 'For', reason: '' },
+      { id: '1f', matter: '~ Ordinary director 2', type: 'director', board: 'For', dragon: 'For', reason: '' },
+      { id: '2', matter: 'Ratification of auditor', type: 'auditor', board: 'For', dragon: 'For', reason: '' },
+      { id: '3', matter: 'Say-on-pay', type: 'sop', board: 'For', dragon: 'Against', reason: 'See below' },
+      { id: '4', matter: 'Say-on-when', type: 'frequency', board: 'One year', dragon: 'One year', reason: '' },
+      { id: '5a', matter: '~ Proxy access by-law', type: 'shareholder', board: 'Against', dragon: 'For', reason: 'See below' },
+      { id: '5b', matter: '~ Director golden parachutes', type: 'shareholder', board: 'Against', dragon: 'For', reason: 'See below' },
+      { id: '5c', matter: '~ Sell the company', type: 'shareholder', board: 'Against', dragon: 'Against', reason: 'See below' },
+      { id: '6', matter: 'Increase authorized shares', type: 'mgmt', board: 'For', dragon: 'Against', reason: 'See below' },
+      { id: '7', matter: 'Approve by-law amendment', type: 'mgmt', board: 'For', dragon: 'Against', reason: 'See below' },
+      { id: '8', matter: 'Reincorporate to Nevada', type: 'mgmt', board: 'For', dragon: 'For', reason: 'See below' },
+      { id: '9', matter: 'Officer exculpation', type: 'mgmt', board: 'For', dragon: 'For', reason: 'See below' },
+    ];
 
-const genProposals=(co,rules)=>{
-  const go=['A','B','C','D','F'];
-  const dr=co.directors.map(d=>{
-    const iss=[];
-    if(d.tenure>rules.tenureConcern)iss.push({rule:'Tenure',fact:`${d.tenure}yr`,th:`>${rules.tenureConcern}yr`});
-    if(d.otherBoards+1>rules.overboardingLimit)iss.push({rule:'Overboarding',fact:`${d.otherBoards+1}`,th:`>${rules.overboardingLimit}`});
-    if(d.committees.some(c=>c.includes('Comp'))&&co.compensation.priorSopSupport<rules.priorSopThreshold)iss.push({rule:'Comp Chair',fact:`${co.compensation.priorSopSupport}%`,th:`<${rules.priorSopThreshold}%`});
-    return{...d,issues:iss,rec:iss.length>0?'AGAINST':'FOR'};
-  });
-  const nar=((co.auditor.fees.auditRelated+co.auditor.fees.tax+co.auditor.fees.other)/co.auditor.fees.total*100).toFixed(1);
-  return[
-    {id:'1.00',matter:'Election of Directors',type:'directors',board:'FOR',rec:dr.some(d=>d.rec==='AGAINST')?'MIXED':'FOR',directors:dr,hasIssues:dr.some(d=>d.issues.length>0)},
-    {id:'2.00',matter:'Ratification of Auditor',type:'auditor',board:'FOR',rec:parseFloat(nar)>rules.nonAuditFeeRatio?'AGAINST':'FOR',hasIssues:parseFloat(nar)>rules.nonAuditFeeRatio,issues:parseFloat(nar)>rules.nonAuditFeeRatio?[{rule:'Non-Audit Fees',fact:`${nar}%`,th:`>${rules.nonAuditFeeRatio}%`}]:[],rationale:`${co.auditor.name} - Tenure: ${co.auditor.tenure}yr. Non-audit: ${nar}%. Prior vote: ${co.auditor.priorYearVote}%.`},
-    {id:'3.00',matter:'Advisory Vote on Executive Compensation',type:'sop',board:'FOR',rec:(go.indexOf(co.compensation.pfpGrade)>go.indexOf(rules.pfpGrade)||co.compensation.priorSopSupport<rules.priorSopThreshold)?'AGAINST':'FOR',hasIssues:go.indexOf(co.compensation.pfpGrade)>go.indexOf(rules.pfpGrade)||co.compensation.priorSopSupport<rules.priorSopThreshold,issues:[...(go.indexOf(co.compensation.pfpGrade)>go.indexOf(rules.pfpGrade)?[{rule:'PfP Grade',fact:co.compensation.pfpGrade,th:`<${rules.pfpGrade}`}]:[]),...(co.compensation.priorSopSupport<rules.priorSopThreshold?[{rule:'Prior SoP',fact:`${co.compensation.priorSopSupport}%`,th:`<${rules.priorSopThreshold}%`}]:[])],rationale:`CEO Comp: ${fmt(co.compensation.totalComp)}. PfP Grade: ${co.compensation.pfpGrade}. Prior SoP: ${co.compensation.priorSopSupport}%.`},
-    {id:'4.00',matter:'Say-on-Pay Frequency',type:'frequency',board:'1 YEAR',rec:'1 YEAR',hasIssues:false,issues:[],rationale:'Annual say-on-pay votes ensure ongoing shareholder oversight.'},
-    {id:'5.00',matter:'SH Proposal: Proxy Access Amendment',type:'shareholder',board:'AGAINST',rec:'FOR',hasIssues:false,issues:[],proponent:'James McRitchie',rationale:'Proxy access enhances shareholder rights.',boardPerspective:'Current provisions are sufficient.',proponentPerspective:'Allow at least two nominees.'},
-    {id:'6.00',matter:'SH Proposal: Director Golden Parachutes',type:'shareholder',board:'AGAINST',rec:'FOR',hasIssues:false,issues:[],proponent:'John Chevedden',rationale:'Golden parachutes for directors are not aligned with shareholder interests.'},
-    {id:'7.00',matter:'Increase Authorized Shares',type:'capital',board:'FOR',rec:'AGAINST',hasIssues:true,issues:[{rule:'Dilution',fact:'100% increase',th:'Excessive'}],rationale:'Would double authorized shares without stated purpose.'},
-    {id:'8.00',matter:'Approve By-law Amendment',type:'bylaw',board:'FOR',rec:'AGAINST',hasIssues:true,issues:[{rule:'Advance Notice',fact:'120 days',th:'Excessive barrier'}],rationale:'Extends advance notice period creating unreasonable barrier.'},
-    {id:'9.00',matter:'Reincorporation to Nevada',type:'reincorp',board:'FOR',rec:'FOR',hasIssues:false,issues:[],rationale:'Nevada law provides reasonable flexibility with adequate protections.'}
-  ];
-};
+    const PORTFOLIO = [
+      { id: 'xyz', name: 'XYZ Inc.', ticker: 'XYZ', exchange: 'Nasdaq', meetingDate: 'April 1, 2026', voteDeadline: 'March 30, 2026', sector: 'Technology', status: 'ready', proposalCount: 16, concernCount: 4 },
+      { id: 'apex', name: 'Apex Technologies', ticker: 'APEX', exchange: 'NYSE', meetingDate: 'April 8, 2026', voteDeadline: 'April 6, 2026', sector: 'Software', status: 'ready', proposalCount: 4, concernCount: 1 },
+      { id: 'sumf', name: 'Summit Financial', ticker: 'SUMF', exchange: 'NYSE', meetingDate: 'April 15, 2026', voteDeadline: 'April 13, 2026', sector: 'Financials', status: 'pending', proposalCount: 6, concernCount: 0 },
+    ];
 
-function App(){
-  const[mode,setMode]=useState('landing');
-  const[step,setStep]=useState(1);
-  const[selectedTemplate,setSelectedTemplate]=useState(null);
-  const[policyText,setPolicyText]=useState('');
-  const[policyName,setPolicyName]=useState('');
-  const[clientName,setClientName]=useState('ABC Investment Manager');
-  const[rules,setRules]=useState(null);
-  const[selectedCompany,setSelectedCompany]=useState(null);
-  const[proposals,setProposals]=useState([]);
-  const[currentProposal,setCurrentProposal]=useState(0);
-  const[votes,setVotes]=useState({});
-  const[activeTab,setActiveTab]=useState('proposals');
-  
-  const selectTemplate=(id)=>{setSelectedTemplate(id);setPolicyText(TEMPLATES[id].text);setPolicyName(TEMPLATES[id].name);};
-  const submitPolicy=()=>{setRules(parsePolicy(policyText));setStep(3);};
-  const updateRule=(k,v)=>setRules(r=>({...r,[k]:v}));
-  const completeOnboarding=()=>setMode('usage');
-  const openMeeting=(co)=>{if(co.status!=='ready')return;const fc=co.id==='sampl'?SAMPLE:co;setSelectedCompany(fc);const ps=co.id==='sampl'?genProposals(fc,rules):[{id:'1.00',matter:'Election of Directors',type:'directors',board:'FOR',rec:'FOR',hasIssues:false}];setProposals(ps);setCurrentProposal(0);setActiveTab('proposals');const v={};ps.forEach(p=>{if(p.directors)p.directors.forEach(d=>v[`${p.id}-${d.name}`]=d.rec);else v[p.id]=p.rec;});setVotes(v);};
-  const closeMeeting=()=>{setSelectedCompany(null);setProposals([]);};
-  const setVote=(k,v)=>setVotes(vs=>({...vs,[k]:v}));
+    const POLICIES = {
+      shareholder: { id: 'shareholder', name: 'Shareholder Value Focus', shortDesc: 'Balanced approach',
+        text: 'We vote proxies in the best interest of clients. We require at least two-thirds independence and become concerned when tenure exceeds fifteen years. Directors should not serve on more than four boards. We vote against say-on-pay when pay-for-performance is poor or prior support was below seventy percent.',
+        rules: { independence: 67, tenure: 15, boards: 4, pfp: 'C', sop: 70, auditFee: 25 }
+      },
+      governance: { id: 'governance', name: 'Governance Leader', shortDesc: 'Rigorous standards',
+        text: 'We hold boards to high standards, requiring seventy-five percent independence and tenure limits of twelve years. Directors should limit to three boards. We oppose say-on-pay when grade falls below B or prior support was below eighty percent.',
+        rules: { independence: 75, tenure: 12, boards: 3, pfp: 'B', sop: 80, auditFee: 20 }
+      },
+      balanced: { id: 'balanced', name: 'Balanced Stewardship', shortDesc: 'Pragmatic approach',
+        text: 'We balance shareholder interests with practical business needs. We expect majority independence and become concerned only when tenure exceeds twenty years. We allow up to five boards. We vote against say-on-pay only when significantly misaligned.',
+        rules: { independence: 50, tenure: 20, boards: 5, pfp: 'D', sop: 60, auditFee: 30 }
+      },
+    };
 
-  // LANDING
-  if(mode==='landing')return(
-    <div className="min-h-screen bg-dragon-50">
-      <header className="bg-white border-b"><div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between"><div className="flex items-center gap-3"><div className="w-10 h-10 bg-dragon-800 rounded-lg flex items-center justify-center"><I.Dragon c="w-7 h-7 text-white"/></div><h1 className="font-bold text-dragon-900">Dragon<span className="text-dragon-600">VOTE</span></h1></div><a href="https://www.dragongc.com" className="text-sm text-dragon-600">by DragonGC</a></div></header>
-      <section className="bg-gradient-to-br from-dragon-800 to-dragon-900 text-white py-20"><div className="max-w-4xl mx-auto px-6 text-center"><h1 className="text-4xl font-bold mb-6">Principles-Based Proxy Voting</h1><p className="text-xl text-dragon-100 mb-8">Vote your values, automatically. Transform your stewardship policy into actionable voting recommendations.</p><button onClick={()=>setMode('onboarding')} className="bg-white text-dragon-800 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-dragon-50 inline-flex items-center gap-2">Get Started <I.ArrowRight c="w-5 h-5"/></button></div></section>
-      <section className="py-16"><div className="max-w-5xl mx-auto px-6"><h2 className="text-3xl font-bold text-dragon-900 text-center mb-12">How It Works</h2><div className="grid md:grid-cols-2 gap-6">{[{t:'Natural Language Policy Parsing',d:'Write your stewardship principles in plain English. Our AI extracts voting rules.'},{t:'Automated Vote Recommendations',d:'Get instant FOR/AGAINST recommendations backed by clear rationale.'},{t:'Full Transparency',d:'See exactly which rules triggered each recommendation. No black boxes.'},{t:'Override Flexibility',d:"Accept the AI recommendation or vote your own way—you're always in control."}].map((item,i)=><div key={i} className="bg-white rounded-xl p-6 border"><h3 className="text-lg font-semibold text-dragon-900 mb-2">{item.t}</h3><p className="text-dragon-600">{item.d}</p></div>)}</div></div></section>
-      <section className="bg-dragon-800 py-12"><div className="max-w-3xl mx-auto px-6 text-center"><h2 className="text-2xl font-bold text-white mb-4">No conflicts. No black boxes. Just transparent voting.</h2><button onClick={()=>setMode('onboarding')} className="mt-4 bg-white text-dragon-800 px-8 py-4 rounded-lg font-semibold inline-flex items-center gap-2">Get Started <I.ArrowRight c="w-5 h-5"/></button></div></section>
-    </div>
-  );
+    function parsePolicy(text) {
+      const r = { independence: 67, tenure: 15, boards: 4, pfp: 'C', sop: 70, auditFee: 25 };
+      const nums = { 'fifty': 50, 'sixty': 60, 'two-thirds': 67, 'seventy': 70, 'seventy-five': 75, 'eighty': 80, 'ten': 10, 'twelve': 12, 'fifteen': 15, 'twenty': 20, 'three': 3, 'four': 4, 'five': 5, 'twenty-five': 25, 'thirty': 30 };
+      const m1 = text.match(/(?:at least |requiring )?([\w-]+)(?:\s*percent| percent)/i);
+      if (m1 && nums[m1[1].toLowerCase()]) r.independence = nums[m1[1].toLowerCase()];
+      const m2 = text.match(/tenure[^.]*?([\w-]+)\s*years/i);
+      if (m2 && nums[m2[1].toLowerCase()]) r.tenure = nums[m2[1].toLowerCase()];
+      const m3 = text.match(/(?:more than|up to|limit[^.]*?to)\s*([\w-]+)\s*boards/i);
+      if (m3 && nums[m3[1].toLowerCase()]) r.boards = nums[m3[1].toLowerCase()];
+      if (text.includes('below B')) r.pfp = 'B';
+      else if (text.includes('significantly misaligned')) r.pfp = 'D';
+      const m4 = text.match(/(?:less than|below)\s*([\w-]+)\s*percent\s*support/i);
+      if (m4 && nums[m4[1].toLowerCase()]) r.sop = nums[m4[1].toLowerCase()];
+      return r;
+    }
 
-  // ONBOARDING
-  if(mode==='onboarding')return(
-    <div className="min-h-screen bg-dragon-50">
-      <header className="bg-white border-b sticky top-0 z-10"><div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between"><div className="flex items-center gap-3"><div className="w-10 h-10 bg-dragon-800 rounded-lg flex items-center justify-center"><I.Dragon c="w-7 h-7 text-white"/></div><div><h1 className="font-bold text-dragon-900">Dragon<span className="text-dragon-600">VOTE</span></h1><p className="text-xs text-dragon-500">Setup Wizard</p></div></div><div className="flex items-center gap-2">{[1,2,3,4].map(s=><React.Fragment key={s}><div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step===s?'bg-dragon-700 text-white':step>s?'bg-dragon-500 text-white':'bg-dragon-200 text-dragon-500'}`}>{step>s?<I.Check c="w-4 h-4"/>:s}</div>{s<4&&<div className={`w-8 h-1 ${step>s?'bg-dragon-500':'bg-dragon-200'}`}/>}</React.Fragment>)}</div></div></header>
-      <main className="max-w-4xl mx-auto px-6 py-8">
-        {step===1&&<div className="space-y-6"><div className="text-center mb-8"><h2 className="text-2xl font-bold text-dragon-900">Select Your Stewardship Policy</h2><p className="text-dragon-600 mt-2">Choose a template or upload your own.</p></div><div className="grid gap-4">{Object.values(TEMPLATES).map(t=><div key={t.id} onClick={()=>selectTemplate(t.id)} className={`bg-white rounded-xl border-2 p-6 cursor-pointer ${selectedTemplate===t.id?'border-dragon-600 shadow-lg':'border-dragon-100 hover:border-dragon-300'}`}><div className="flex items-center justify-between"><div><h3 className="text-lg font-semibold text-dragon-900">{t.name}</h3><p className="text-dragon-600 text-sm mt-1">{t.shortDesc}</p></div><div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedTemplate===t.id?'border-dragon-600 bg-dragon-600':'border-dragon-300'}`}>{selectedTemplate===t.id&&<I.Check c="w-4 h-4 text-white"/>}</div></div></div>)}</div><label className="block bg-white rounded-xl border-2 border-dashed border-dragon-200 p-8 text-center cursor-pointer hover:border-dragon-400"><I.Upload c="w-10 h-10 text-dragon-400 mx-auto mb-3"/><span className="text-dragon-700 font-medium">Upload your policy document</span><span className="block text-sm text-dragon-500 mt-1">PDF, DOCX, or TXT</span><input type="file" className="hidden" onChange={()=>{setPolicyText('Custom policy...');setPolicyName('Custom Policy');setSelectedTemplate('custom');}}/></label><div className="flex justify-end pt-4"><button disabled={!selectedTemplate} onClick={()=>setStep(2)} className={`px-6 py-3 rounded-lg font-medium flex items-center gap-2 ${selectedTemplate?'bg-dragon-700 text-white hover:bg-dragon-800':'bg-dragon-200 text-dragon-400 cursor-not-allowed'}`}>Continue <I.ChevronRight c="w-4 h-4"/></button></div></div>}
-        {step===2&&<div className="space-y-6"><div className="text-center mb-8"><h2 className="text-2xl font-bold text-dragon-900">Review & Edit Your Policy</h2></div><div className="bg-white rounded-xl border p-6"><label className="block text-sm font-medium text-dragon-700 mb-2">Policy Name</label><input type="text" value={policyName} onChange={e=>setPolicyName(e.target.value)} className="w-full px-4 py-2 border rounded-lg mb-4"/><label className="block text-sm font-medium text-dragon-700 mb-2">Client Name</label><input type="text" value={clientName} onChange={e=>setClientName(e.target.value)} className="w-full px-4 py-2 border rounded-lg mb-4"/><label className="block text-sm font-medium text-dragon-700 mb-2">Policy Text</label><textarea value={policyText} onChange={e=>setPolicyText(e.target.value)} rows={10} className="w-full px-4 py-3 border rounded-lg text-sm"/></div><div className="flex justify-between pt-4"><button onClick={()=>setStep(1)} className="px-6 py-3 rounded-lg font-medium text-dragon-600 hover:bg-dragon-100 flex items-center gap-2"><I.ChevronLeft c="w-4 h-4"/> Back</button><button onClick={submitPolicy} className="px-6 py-3 rounded-lg font-medium bg-dragon-700 text-white hover:bg-dragon-800 flex items-center gap-2">Parse Policy <I.ChevronRight c="w-4 h-4"/></button></div></div>}
-        {step===3&&rules&&<div className="space-y-6"><div className="text-center mb-8"><h2 className="text-2xl font-bold text-dragon-900">Extracted Voting Rules</h2></div><div className="bg-white rounded-xl border p-6 space-y-6"><div className="grid md:grid-cols-2 gap-6">{[{label:'Board Independence',key:'boardIndependence',min:50,max:90,unit:'%'},{label:'Tenure Concern',key:'tenureConcern',min:8,max:25,unit:' yrs'},{label:'Overboarding Limit',key:'overboardingLimit',min:2,max:6,unit:' boards'},{label:'Prior SoP Threshold',key:'priorSopThreshold',min:50,max:90,unit:'%'},{label:'Non-Audit Fee Ratio',key:'nonAuditFeeRatio',min:15,max:40,unit:'%'}].map(item=><div key={item.key}><label className="block text-sm font-medium text-dragon-700 mb-2">{item.label}</label><div className="flex items-center gap-3"><input type="range" min={item.min} max={item.max} value={rules[item.key]} onChange={e=>updateRule(item.key,parseInt(e.target.value))} className="flex-1"/><span className="w-16 text-center font-semibold">{rules[item.key]}{item.unit}</span></div></div>)}<div><label className="block text-sm font-medium text-dragon-700 mb-2">PfP Grade Threshold</label><select value={rules.pfpGrade} onChange={e=>updateRule('pfpGrade',e.target.value)} className="w-full px-4 py-2 border rounded-lg"><option value="A">A - Top grade</option><option value="B">B - Good</option><option value="C">C - Moderate</option><option value="D">D - Only oppose significant misalignment</option></select></div></div></div><div className="flex justify-between pt-4"><button onClick={()=>setStep(2)} className="px-6 py-3 rounded-lg font-medium text-dragon-600 hover:bg-dragon-100 flex items-center gap-2"><I.ChevronLeft c="w-4 h-4"/> Back</button><button onClick={()=>setStep(4)} className="px-6 py-3 rounded-lg font-medium bg-dragon-700 text-white hover:bg-dragon-800 flex items-center gap-2">Confirm <I.ChevronRight c="w-4 h-4"/></button></div></div>}
-        {step===4&&<div className="space-y-6 text-center py-12"><div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto"><I.CheckCircle c="w-10 h-10 text-green-600"/></div><h2 className="text-2xl font-bold text-dragon-900">Policy Setup Complete!</h2><p className="text-dragon-600">Your stewardship policy has been configured.</p><div className="bg-white rounded-xl border p-6 max-w-md mx-auto text-left mt-8"><h3 className="font-semibold mb-3">Summary</h3><div className="space-y-2 text-sm">{[['Policy',policyName],['Client',clientName],['Independence',rules.boardIndependence+'%'],['Tenure',rules.tenureConcern+' years'],['Overboarding',rules.overboardingLimit+' boards'],['PfP Grade',rules.pfpGrade]].map(([k,v],i)=><div key={i} className="flex justify-between"><span className="text-dragon-500">{k}:</span><span className="font-medium">{v}</span></div>)}</div></div><button onClick={completeOnboarding} className="mt-8 px-8 py-4 rounded-lg font-medium bg-dragon-700 text-white hover:bg-dragon-800 inline-flex items-center gap-2">Go to Dashboard <I.ArrowRight c="w-5 h-5"/></button></div>}
-      </main>
-    </div>
-  );
+    // Report Section Component
+    function Section({ id, title, children }) {
+      return (
+        <div id={id} className="bg-white rounded-xl border overflow-hidden mb-6">
+          <div className="px-6 py-3 border-b bg-teal-50">
+            <h2 className="text-lg font-semibold text-teal-800">{title}</h2>
+          </div>
+          <div className="p-6">{children}</div>
+        </div>
+      );
+    }
 
-  // DASHBOARD
-  if(mode==='usage'&&!selectedCompany)return(
-    <div className="min-h-screen bg-dragon-50">
-      <header className="bg-white border-b sticky top-0 z-10"><div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between"><div className="flex items-center gap-3"><div className="w-10 h-10 bg-dragon-800 rounded-lg flex items-center justify-center"><I.Dragon c="w-7 h-7 text-white"/></div><div><h1 className="font-bold text-dragon-900">Dragon<span className="text-dragon-600">VOTE</span></h1><p className="text-xs text-dragon-500">{clientName}</p></div></div><div className="flex items-center gap-4"><button className="p-2 text-dragon-600 hover:bg-dragon-100 rounded-lg"><I.Bell c="w-5 h-5"/></button><button className="p-2 text-dragon-600 hover:bg-dragon-100 rounded-lg"><I.Settings c="w-5 h-5"/></button></div></div></header>
-      <main className="max-w-6xl mx-auto px-6 py-8">
-        <div className="flex items-center justify-between mb-8"><div><h2 className="text-2xl font-bold text-dragon-900">Upcoming Meetings</h2><p className="text-dragon-600">Review and vote your portfolio companies</p></div><button className="px-4 py-2 border rounded-lg text-dragon-700 hover:bg-white flex items-center gap-2"><I.Filter c="w-4 h-4"/> Filter</button></div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">{[{l:'Upcoming',v:PORTFOLIO.filter(c=>c.status!=='not_filed').length,col:'dragon'},{l:'Ready',v:PORTFOLIO.filter(c=>c.status==='ready').length,col:'green'},{l:'Pending',v:PORTFOLIO.filter(c=>c.status==='pending').length,col:'yellow'},{l:'Concerns',v:PORTFOLIO.reduce((a,c)=>a+(c.concernCount||0),0),col:'red'}].map((s,i)=><div key={i} className="bg-white rounded-xl border p-4"><div className="text-sm text-dragon-500">{s.l}</div><div className={`text-2xl font-bold text-${s.col}-600`}>{s.v}</div></div>)}</div>
-        <div className="bg-white rounded-xl border overflow-hidden"><table className="w-full"><thead className="bg-dragon-50"><tr><th className="text-left px-6 py-3 text-sm font-medium text-dragon-600">Company</th><th className="text-left px-6 py-3 text-sm font-medium text-dragon-600">Meeting</th><th className="text-center px-6 py-3 text-sm font-medium text-dragon-600">Proposals</th><th className="text-center px-6 py-3 text-sm font-medium text-dragon-600">Concerns</th><th className="text-center px-6 py-3 text-sm font-medium text-dragon-600">Status</th><th className="px-6 py-3"></th></tr></thead><tbody>{PORTFOLIO.map(co=><tr key={co.id} className="border-t hover:bg-dragon-50"><td className="px-6 py-4"><div className="font-medium text-dragon-900">{co.name}</div><div className="text-sm text-dragon-500">{co.ticker} • {co.exchange}</div></td><td className="px-6 py-4 text-dragon-700">{co.meetingDate}</td><td className="px-6 py-4 text-center">{co.proposalCount||'—'}</td><td className="px-6 py-4 text-center">{co.concernCount>0?<span className="text-red-600 flex items-center justify-center gap-1"><I.Alert c="w-4 h-4"/>{co.concernCount}</span>:co.status==='ready'?<span className="text-green-600">0</span>:'—'}</td><td className="px-6 py-4 text-center"><span className={`px-2 py-1 rounded-full text-xs font-medium ${co.status==='ready'?'bg-green-100 text-green-700':co.status==='pending'?'bg-yellow-100 text-yellow-700':'bg-gray-100 text-gray-600'}`}>{co.status==='ready'?'Ready':co.status==='pending'?'Pending':'Not Filed'}</span></td><td className="px-6 py-4"><button onClick={()=>openMeeting(co)} disabled={co.status!=='ready'} className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-1 ${co.status==='ready'?'bg-dragon-700 text-white hover:bg-dragon-800':'bg-dragon-100 text-dragon-400 cursor-not-allowed'}`}>Review <I.ChevronRight c="w-4 h-4"/></button></td></tr>)}</tbody></table></div>
-      </main>
-    </div>
-  );
+    // Main App
+    function App() {
+      const [mode, setMode] = useState('onboarding');
+      const [step, setStep] = useState(1);
+      const [template, setTemplate] = useState(null);
+      const [policyText, setPolicyText] = useState('');
+      const [policyName, setPolicyName] = useState('');
+      const [rules, setRules] = useState(null);
+      const [company, setCompany] = useState(null);
+      const [votes, setVotes] = useState({});
+      const [section, setSection] = useState('agenda');
 
-  // MEETING DETAIL
-  if(mode==='usage'&&selectedCompany){
-    const co=selectedCompany;const p=proposals[currentProposal];
-    const tabs=[{id:'proposals',label:'Proposals'},{id:'profile',label:'Company'},{id:'governance',label:'Governance'},{id:'ownership',label:'Ownership'},{id:'compensation',label:'Compensation'},{id:'auditor',label:'Auditor'},{id:'history',label:'Prior Votes'}];
-    return(
-      <div className="min-h-screen bg-dragon-50">
-        <header className="bg-white border-b sticky top-0 z-10"><div className="max-w-7xl mx-auto px-6 py-4"><div className="flex items-center justify-between"><div className="flex items-center gap-4"><button onClick={closeMeeting} className="p-2 text-dragon-600 hover:bg-dragon-100 rounded-lg"><I.ArrowLeft c="w-5 h-5"/></button><div><h1 className="text-xl font-bold text-dragon-900">{co.name}</h1><div className="flex items-center gap-3 text-sm text-dragon-500"><span>{co.ticker} • {co.exchange}</span><span>•</span><span className="flex items-center gap-1"><I.Calendar c="w-4 h-4"/>{co.meetingDate}</span></div></div></div><div className="flex items-center gap-3"><button className="px-4 py-2 border rounded-lg text-dragon-700 hover:bg-dragon-100 flex items-center gap-2"><I.Download c="w-4 h-4"/> Export PDF</button><button className="px-4 py-2 bg-dragon-700 text-white rounded-lg hover:bg-dragon-800 flex items-center gap-2"><I.Check c="w-4 h-4"/> Submit Votes</button></div></div><div className="flex gap-1 mt-4 -mb-px overflow-x-auto">{tabs.map(tab=><button key={tab.id} onClick={()=>setActiveTab(tab.id)} className={`px-4 py-2 text-sm font-medium border-b-2 ${activeTab===tab.id?'border-dragon-700 text-dragon-800':'border-transparent text-dragon-500 hover:text-dragon-700'}`}>{tab.label}</button>)}</div></div></header>
-        <div className="bg-white border-b"><div className="max-w-7xl mx-auto px-6 py-4"><div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">{[['Issued To',clientName],['Policy',policyName],['Record Date',co.recordDate],['Published',co.publishDate],['ISIN',co.isin]].map(([k,v],i)=><div key={i}><span className="text-dragon-500">{k}:</span><span className="ml-2 font-medium">{v}</span></div>)}</div></div></div>
-        <div className="bg-green-50 border-b border-green-200"><div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-4"><I.CheckCircle c="w-5 h-5 text-green-600"/><div className="text-sm"><span className="font-medium text-green-800">No Conflicts of Interest.</span><span className="text-green-700 ml-2">{co.engagement.conflictsNote}</span></div></div></div>
-        <main className="max-w-7xl mx-auto px-6 py-6">
-          {activeTab==='profile'&&<div className="space-y-6"><div className="bg-white rounded-xl border p-6"><h3 className="text-lg font-semibold mb-4">Company Description</h3><p className="text-dragon-700">{co.description}</p><div className="mt-4 flex flex-wrap gap-2">{co.indexMembership.map((idx,i)=><span key={i} className="px-2 py-1 bg-dragon-100 text-dragon-700 text-xs rounded">{idx}</span>)}</div></div><div className="grid grid-cols-2 md:grid-cols-4 gap-4">{[['Sector',co.sector],['Industry',co.industry],['HQ',co.headquarters],['Incorporated',co.stateOfIncorporation]].map(([k,v],i)=><div key={i} className="bg-white rounded-xl border p-4"><div className="text-sm text-dragon-500">{k}</div><div className="font-semibold text-sm">{v}</div></div>)}</div><div className="bg-white rounded-xl border p-6"><h3 className="text-lg font-semibold mb-4">Financial Overview</h3><div className="grid grid-cols-2 md:grid-cols-4 gap-6">{[['Market Cap',fmt(co.marketCap*1e6)],['EV',fmt(co.enterpriseValue*1e6)],['Revenue',fmt(co.revenue*1e6)],['Shares Out',co.sharesOutstanding.toFixed(1)+'M']].map(([k,v],i)=><div key={i}><div className="text-sm text-dragon-500">{k}</div><div className="text-xl font-bold">{v}</div></div>)}</div><div className="mt-6 pt-6 border-t grid grid-cols-3 gap-4">{[['1Y TSR',co.tsr1yr],['3Y TSR',co.tsr3yr],['5Y TSR',co.tsr5yr]].map(([k,v],i)=><div key={i} className="text-center p-3 bg-dragon-50 rounded-lg"><div className="text-sm text-dragon-500">{k}</div><div className={`text-lg font-bold ${v>=0?'text-green-600':'text-red-600'}`}>{v}%</div></div>)}</div></div></div>}
-          {activeTab==='governance'&&<div className="space-y-6"><div className="bg-white rounded-xl border p-6"><h3 className="text-lg font-semibold mb-4">Corporate Governance</h3><div className="grid grid-cols-2 md:grid-cols-3 gap-4">{[['Election',co.electionMethod],['Independence',co.boardIndependence+'%'],['Avg Tenure',co.avgNEDTenure+' yrs'],['Gender Div',co.genderDiversity+'%'],['Ethnic Div',co.ethnicDiversity+'%'],['CEO Since',co.compensation.ceoStartDate]].map(([k,v],i)=><div key={i} className="p-3 bg-gray-50 rounded-lg"><div className="text-xs text-dragon-500">{k}</div><div className="font-semibold">{v}</div></div>)}</div><div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">{[['Indep Chair',!co.combinedChairCEO,true],['Staggered Board',co.staggeredBoard,false],['Poison Pill',co.poisonPill,false],['Proxy Access',co.allowsProxyAccess,true],['Multi-Class',co.multiClassVoting,false],['Controlled',co.controlledCompany,false]].map(([l,v,g],i)=><div key={i} className={`p-3 rounded-lg flex items-center justify-between ${v===g?'bg-green-50':'bg-red-50'}`}><span className="text-sm">{l}</span><span className={`font-semibold ${v===g?'text-green-600':'text-red-600'}`}>{v?'Yes':'No'}</span></div>)}</div></div></div>}
-          {activeTab==='ownership'&&<div className="space-y-6"><div className="bg-white rounded-xl border p-6"><h3 className="text-lg font-semibold mb-4">Share Breakdown</h3><div className="grid grid-cols-2 md:grid-cols-3 gap-4">{[['Class',co.shareClass],['Votes/Share',co.votesPerShare],['Inside Own',co.insideOwnership+'%'],['Strategic',co.strategicOwners+'%'],['Free Float',co.freeFloat+'%']].map(([k,v],i)=><div key={i} className="p-4 bg-gray-50 rounded-lg"><div className="text-sm text-dragon-500">{k}</div><div className="font-semibold">{v}</div></div>)}</div></div><div className="bg-white rounded-xl border p-6"><h3 className="text-lg font-semibold mb-4">Top 10 Shareholders</h3><table className="w-full text-sm"><thead><tr className="border-b bg-gray-50"><th className="text-left py-3 px-3">#</th><th className="text-left py-3 px-3">Holder</th><th className="text-right py-3 px-3">Owned</th><th className="text-left py-3 px-3">Country</th></tr></thead><tbody>{co.topShareholders.map((h,i)=><tr key={i} className="border-b hover:bg-gray-50"><td className="py-3 px-3 text-dragon-500">{i+1}</td><td className="py-3 px-3 font-medium">{h.name}</td><td className="py-3 px-3 text-right font-semibold">{h.pct.toFixed(2)}%</td><td className="py-3 px-3 text-dragon-600">{h.country}</td></tr>)}</tbody></table></div></div>}
-          {activeTab==='compensation'&&<div className="space-y-6"><div className="bg-white rounded-xl border p-6"><div className="flex items-center justify-between mb-4"><h3 className="text-lg font-semibold">Pay-for-Performance</h3><div className={`text-3xl font-bold ${co.compensation.pfpGrade==='D'?'text-orange-600':'text-green-600'}`}>Grade: {co.compensation.pfpGrade}</div></div><div className="grid grid-cols-3 gap-4">{Object.entries(co.compensation.pfpGradeHistory).map(([y,g])=><div key={y} className="text-center p-3 bg-gray-50 rounded-lg"><div className="text-sm text-dragon-500">FY {y}</div><div className={`text-xl font-bold ${g==='D'?'text-orange-600':g==='C'?'text-yellow-600':'text-green-600'}`}>{g}</div></div>)}</div></div><div className="bg-white rounded-xl border p-6"><h3 className="text-lg font-semibold mb-4">CEO: {co.compensation.ceoName}</h3><div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">{[['Total Comp',fmt(co.compensation.totalComp)],['YoY Change',co.compensation.yoyChange+'%'],['CEO:Median',co.compensation.ceoToMedianRatio+':1'],['Prior SoP',co.compensation.priorSopSupport+'%']].map(([k,v],i)=><div key={i} className="p-4 bg-dragon-50 rounded-lg"><div className="text-sm text-dragon-500">{k}</div><div className="text-xl font-bold">{v}</div></div>)}</div><h4 className="font-semibold mb-3">Breakdown</h4><div className="space-y-2">{[['Salary',co.compensation.salary],['Bonus',co.compensation.bonus],['Equity',co.compensation.equity],['Other',co.compensation.other]].map(([k,v],i)=><div key={i} className="flex items-center"><div className="w-20 text-sm text-dragon-600">{k}</div><div className="flex-1 mx-4 h-5 bg-gray-200 rounded-full overflow-hidden"><div className="h-full bg-dragon-500 rounded-full" style={{width:`${v/co.compensation.totalComp*100}%`}}/></div><div className="w-20 text-right font-semibold">{fmt(v)}</div></div>)}</div></div><div className="bg-white rounded-xl border p-6"><h3 className="text-lg font-semibold mb-4">Risk-Mitigating Policies</h3><div className="grid grid-cols-2 md:grid-cols-3 gap-3">{[['Clawback',co.compensation.clawbackPolicy],['Anti-Hedging',co.compensation.antiHedgingPolicy],['Stock Guidelines',co.compensation.stockOwnershipGuidelines],['Single-Trigger CIC',!co.compensation.singleTriggerCIC],['Excise Gross-Ups',!co.compensation.exciseTaxGrossUps]].map(([k,v],i)=><div key={i} className={`p-3 rounded-lg flex items-center justify-between ${v?'bg-green-50':'bg-red-50'}`}><span className="text-sm">{k}</span><span className={`font-semibold ${v?'text-green-600':'text-red-600'}`}>{v?'Yes':'No'}</span></div>)}</div></div></div>}
-          {activeTab==='auditor'&&<div className="space-y-6"><div className="bg-white rounded-xl border p-6"><h3 className="text-lg font-semibold mb-4">Auditor Information</h3><div className="grid grid-cols-2 md:grid-cols-4 gap-4">{[['Auditor',co.auditor.name],['Tenure',co.auditor.tenure+' years'],['Opinion',co.auditor.opinion],['Prior Vote',co.auditor.priorYearVote+'%']].map(([k,v],i)=><div key={i} className="p-4 bg-gray-50 rounded-lg"><div className="text-sm text-dragon-500">{k}</div><div className="font-semibold">{v}</div></div>)}</div><div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-3">{[['Restatement',!co.auditor.restatement],['Material Weakness',!co.auditor.materialWeakness]].map(([k,v],i)=><div key={i} className={`p-3 rounded-lg flex items-center justify-between ${v?'bg-green-50':'bg-red-50'}`}><span className="text-sm">{k}</span><span className={`font-semibold ${v?'text-green-600':'text-red-600'}`}>{v?'None':'Yes'}</span></div>)}<div className="p-3 bg-gray-50 rounded-lg"><span className="text-sm text-dragon-500">Lead Partner:</span><span className="ml-2 font-semibold">{co.auditor.leadPartner}</span></div></div></div><div className="bg-white rounded-xl border p-6"><h3 className="text-lg font-semibold mb-4">Auditor Fees</h3><table className="w-full text-sm"><thead><tr className="border-b bg-gray-50"><th className="text-left py-3 px-3">Type</th><th className="text-right py-3 px-3">Current</th><th className="text-right py-3 px-3">Prior</th><th className="text-right py-3 px-3">% of Total</th></tr></thead><tbody>{[['Audit',co.auditor.fees.audit,co.auditor.priorFees.audit],['Audit-Related',co.auditor.fees.auditRelated,co.auditor.priorFees.auditRelated],['Tax',co.auditor.fees.tax,co.auditor.priorFees.tax],['Other',co.auditor.fees.other,co.auditor.priorFees.other],['Total',co.auditor.fees.total,co.auditor.priorFees.total]].map(([k,c,p],i)=><tr key={i} className={i===4?'bg-gray-50 font-semibold':'border-b'}><td className="py-3 px-3">{k}</td><td className="py-3 px-3 text-right">{fmt(c)}</td><td className="py-3 px-3 text-right text-dragon-500">{fmt(p)}</td><td className="py-3 px-3 text-right">{(c/co.auditor.fees.total*100).toFixed(1)}%</td></tr>)}</tbody></table><div className="mt-4 p-4 bg-dragon-50 rounded-lg"><div className="text-sm text-dragon-500">Non-Audit Fee Ratio</div><div className="text-xl font-bold">{((co.auditor.fees.auditRelated+co.auditor.fees.tax+co.auditor.fees.other)/co.auditor.fees.total*100).toFixed(1)}%</div></div></div></div>}
-          {activeTab==='history'&&<div className="bg-white rounded-xl border p-6"><h3 className="text-lg font-semibold mb-4">Prior Year Vote Results</h3><table className="w-full text-sm"><thead><tr className="border-b bg-gray-50"><th className="text-left py-3 px-3">Proposal</th><th className="text-right py-3 px-3">For</th><th className="text-center py-3 px-3">Result</th></tr></thead><tbody>{co.priorVoteResults.map((v,i)=><tr key={i} className="border-b hover:bg-gray-50"><td className="py-3 px-3">{v.proposal}</td><td className="py-3 px-3 text-right font-semibold text-green-600">{v.forPct.toFixed(2)}%</td><td className="py-3 px-3 text-center"><span className={`px-2 py-1 rounded text-xs font-medium ${v.forPct>50?'bg-green-100 text-green-800':'bg-red-100 text-red-800'}`}>{v.forPct>50?'Passed':'Failed'}</span></td></tr>)}</tbody></table></div>}
-          {activeTab==='proposals'&&<div className="grid lg:grid-cols-3 gap-6"><div className="lg:col-span-1 space-y-3"><h3 className="font-semibold mb-3">Agenda Items</h3>{proposals.map((pr,i)=><div key={pr.id} onClick={()=>setCurrentProposal(i)} className={`bg-white rounded-lg border p-4 cursor-pointer ${currentProposal===i?'border-dragon-500 shadow-md':'border-dragon-100 hover:border-dragon-300'}`}><div className="flex items-start justify-between"><div className="flex-1"><div className="text-xs text-dragon-500 mb-1">Item {pr.id}</div><div className="font-medium text-dragon-900 text-sm">{pr.matter}</div></div><div className={`px-2 py-1 rounded text-xs font-medium ${pr.rec==='FOR'||pr.rec==='1 YEAR'?'bg-green-100 text-green-700':pr.rec==='AGAINST'?'bg-red-100 text-red-700':'bg-yellow-100 text-yellow-700'}`}>{pr.rec}</div></div>{pr.hasIssues&&<div className="mt-2 flex items-center gap-1 text-xs text-amber-600"><I.Alert c="w-3 h-3"/> Policy concerns</div>}</div>)}</div><div className="lg:col-span-2">{p&&<div className="bg-white rounded-xl border p-6"><div className="flex items-start justify-between mb-6"><div><div className="text-sm text-dragon-500 mb-1">Item {p.id}</div><h2 className="text-xl font-bold text-dragon-900">{p.matter}</h2><div className="text-sm text-dragon-500 mt-1">Board: <span className="font-medium">{p.board}</span></div></div><div className={`px-4 py-2 rounded-lg font-semibold ${p.rec==='FOR'||p.rec==='1 YEAR'?'bg-green-100 text-green-700':p.rec==='AGAINST'?'bg-red-100 text-red-700':'bg-yellow-100 text-yellow-700'}`}>DragonVOTE: {p.rec}</div></div>{p.directors?<div><table className="w-full text-sm"><thead><tr className="border-b bg-gray-50"><th className="text-left py-2 px-2">Director</th><th className="text-center py-2 px-2">Age</th><th className="text-center py-2 px-2">Tenure</th><th className="text-center py-2 px-2">Ind</th><th className="text-center py-2 px-2">Other Bds</th><th className="text-center py-2 px-2">Vote</th></tr></thead><tbody>{p.directors.map(d=><tr key={d.name} className={`border-b ${d.issues.length>0?'bg-red-50':''}`}><td className="py-2 px-2"><div className="font-medium">{d.name}</div>{d.role&&<div className="text-xs text-dragon-500">{d.role}</div>}</td><td className="py-2 px-2 text-center">{d.age}</td><td className="py-2 px-2 text-center">{d.tenure}yr</td><td className="py-2 px-2 text-center">{d.independent?'✓':'✗'}</td><td className="py-2 px-2 text-center">{d.otherBoards}</td><td className="py-2 px-2 text-center"><select value={votes[`${p.id}-${d.name}`]||d.rec} onChange={e=>setVote(`${p.id}-${d.name}`,e.target.value)} className={`px-2 py-1 rounded border text-sm font-medium ${(votes[`${p.id}-${d.name}`]||d.rec)==='FOR'?'bg-green-50 border-green-200 text-green-700':'bg-red-50 border-red-200 text-red-700'}`}><option value="FOR">FOR</option><option value="AGAINST">AGAINST</option><option value="ABSTAIN">ABSTAIN</option></select></td></tr>)}</tbody></table>{p.directors.some(d=>d.issues.length>0)&&<div className="mt-4 p-4 bg-amber-50 rounded-lg border border-amber-200"><h4 className="font-semibold text-amber-800 flex items-center gap-2 mb-2"><I.Alert c="w-4 h-4"/> Policy Concerns</h4><ul className="space-y-1 text-sm">{p.directors.filter(d=>d.issues.length>0).map(d=><li key={d.name}><span className="font-medium text-amber-900">{d.name}:</span>{d.issues.map((iss,i)=><span key={i} className="ml-2 text-amber-700">{iss.rule} ({iss.fact})</span>)}</li>)}</ul></div>}</div>:<div><div className="mb-6"><h3 className="font-semibold mb-2">Analysis</h3><p className="text-dragon-700">{p.rationale}</p></div>{p.boardPerspective&&<div className="mb-6 p-4 bg-gray-50 rounded-lg"><h4 className="font-semibold text-dragon-800 mb-2">Board's Perspective</h4><p className="text-dragon-600 text-sm">{p.boardPerspective}</p></div>}{p.proponentPerspective&&<div className="mb-6 p-4 bg-blue-50 rounded-lg"><h4 className="font-semibold text-blue-800 mb-2">Proponent ({p.proponent})</h4><p className="text-blue-700 text-sm">{p.proponentPerspective}</p></div>}{p.issues&&p.issues.length>0&&<div className="mb-6 p-4 bg-amber-50 rounded-lg border border-amber-200"><h4 className="font-semibold text-amber-800 flex items-center gap-2 mb-2"><I.Alert c="w-4 h-4"/> Policy Concerns</h4><ul className="space-y-1 text-sm text-amber-700">{p.issues.map((iss,i)=><li key={i}>{iss.rule}: {iss.fact}</li>)}</ul></div>}<div className="border-t pt-6"><h3 className="font-semibold mb-3">Your Vote</h3><div className="flex gap-3">{(p.type==='frequency'?['1 YEAR','2 YEARS','3 YEARS','ABSTAIN']:['FOR','AGAINST','ABSTAIN']).map(opt=><button key={opt} onClick={()=>setVote(p.id,opt)} className={`px-6 py-3 rounded-lg font-medium ${votes[p.id]===opt?opt==='FOR'||opt==='1 YEAR'?'bg-green-600 text-white':opt==='AGAINST'?'bg-red-600 text-white':'bg-gray-600 text-white':'bg-gray-100 text-dragon-700 hover:bg-gray-200'}`}>{opt}</button>)}</div></div></div>}</div>}</div></div>}
-        </main>
-      </div>
-    );
-  }
-  return null;
-}
-ReactDOM.render(<App/>,document.getElementById('root'));
-</script>
+      const selectTemplate = (id) => {
+        setTemplate(id);
+        setPolicyText(POLICIES[id].text);
+        setPolicyName(POLICIES[id].name);
+      };
+
+      const submitPolicy = () => { setRules(parsePolicy(policyText)); setStep(3); };
+      const updateRule = (k, v) => setRules(r => ({...r, [k]: v}));
+      const finish = () => setMode('usage');
+      const openCompany = (c) => {
+        if (c.status !== 'ready') return;
+        setCompany(c.id === 'xyz' ? XYZ_COMPANY : c);
+        const v = {}; BALLOT.forEach(b => v[b.id] = b.dragon); setVotes(v);
+      };
+      const closeCompany = () => setCompany(null);
+      const setVote = (k, v) => setVotes(prev => ({...prev, [k]: v}));
+
+      // ONBOARDING
+      if (mode === 'onboarding') {
+        return (
+          <div className="min-h-screen bg-gray-100">
+            <header className="bg-white border-b sticky top-0 z-10">
+              <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-teal-700 rounded-lg flex items-center justify-center">
+                    <Icons.Vote className="w-6 h-6 text-white" />
+                  </div>
+                  <div><h1 className="font-bold">DragonVOTE</h1><p className="text-xs text-gray-500">Setup</p></div>
+                </div>
+                <div className="flex items-center gap-2">
+                  {[1,2,3,4].map(s => (
+                    <React.Fragment key={s}>
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step === s ? 'bg-teal-700 text-white' : step > s ? 'bg-green-500 text-white' : 'bg-gray-200'}`}>
+                        {step > s ? <Icons.Check className="w-4 h-4" /> : s}
+                      </div>
+                      {s < 4 && <div className={`w-6 h-1 ${step > s ? 'bg-green-500' : 'bg-gray-200'}`} />}
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+            </header>
+            <main className="max-w-4xl mx-auto px-6 py-8">
+              {step === 1 && (
+                <div className="space-y-6">
+                  <div className="text-center mb-8"><h2 className="text-2xl font-bold">Select Your Policy</h2></div>
+                  {Object.values(POLICIES).map(p => (
+                    <div key={p.id} onClick={() => selectTemplate(p.id)}
+                      className={`p-6 border-2 rounded-xl cursor-pointer ${template === p.id ? 'border-teal-600 bg-teal-50' : 'border-gray-200 hover:border-gray-300'}`}>
+                      <div className="flex justify-between">
+                        <div>
+                          <h3 className="text-lg font-semibold">{p.name}</h3>
+                          <p className="text-sm text-gray-500">{p.shortDesc}</p>
+                          <p className="text-sm text-gray-600 mt-2 line-clamp-3">{p.text}</p>
+                        </div>
+                        <div className={`w-6 h-6 rounded-full border-2 ${template === p.id ? 'border-teal-600 bg-teal-600' : 'border-gray-300'}`}>
+                          {template === p.id && <Icons.Check className="w-4 h-4 text-white" />}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {template && <button onClick={() => setStep(2)} className="w-full bg-teal-700 text-white py-3 rounded-lg font-medium">Continue</button>}
+                </div>
+              )}
+              {step === 2 && (
+                <div className="space-y-6">
+                  <button onClick={() => setStep(1)} className="text-gray-500 flex items-center gap-1"><Icons.ChevronLeft className="w-4 h-4" />Back</button>
+                  <h2 className="text-2xl font-bold text-center">Customize Policy</h2>
+                  <input type="text" value={policyName} onChange={e => setPolicyName(e.target.value)} className="w-full px-4 py-2 border rounded-lg" placeholder="Policy Name" />
+                  <textarea value={policyText} onChange={e => setPolicyText(e.target.value)} className="w-full h-64 p-4 border rounded-xl text-sm" />
+                  <button onClick={submitPolicy} className="w-full bg-teal-700 text-white py-3 rounded-lg font-medium">Translate Rules</button>
+                </div>
+              )}
+              {step === 3 && rules && (
+                <div className="space-y-6">
+                  <button onClick={() => setStep(2)} className="text-gray-500 flex items-center gap-1"><Icons.ChevronLeft className="w-4 h-4" />Back</button>
+                  <h2 className="text-2xl font-bold text-center">Review Rules</h2>
+                  <div className="bg-white border rounded-xl p-4 space-y-4">
+                    <div className="flex justify-between items-center border-b pb-2">
+                      <span>Board Independence</span>
+                      <div className="flex items-center gap-2">
+                        <input type="range" min="50" max="90" value={rules.independence} onChange={e => updateRule('independence', +e.target.value)} />
+                        <span className="font-semibold text-teal-600 w-12 text-right">{rules.independence}%</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center border-b pb-2">
+                      <span>Tenure Concern</span>
+                      <div className="flex items-center gap-2">
+                        <input type="range" min="8" max="25" value={rules.tenure} onChange={e => updateRule('tenure', +e.target.value)} />
+                        <span className="font-semibold text-teal-600 w-12 text-right">{rules.tenure} yrs</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center border-b pb-2">
+                      <span>Prior SoP Threshold</span>
+                      <div className="flex items-center gap-2">
+                        <input type="range" min="50" max="90" step="5" value={rules.sop} onChange={e => updateRule('sop', +e.target.value)} />
+                        <span className="font-semibold text-teal-600 w-12 text-right">{rules.sop}%</span>
+                      </div>
+                    </div>
+                  </div>
+                  <button onClick={() => setStep(4)} className="w-full bg-teal-700 text-white py-3 rounded-lg font-medium">Continue</button>
+                </div>
+              )}
+              {step === 4 && (
+                <div className="space-y-6">
+                  <button onClick={() => setStep(3)} className="text-gray-500 flex items-center gap-1"><Icons.ChevronLeft className="w-4 h-4" />Back</button>
+                  <h2 className="text-2xl font-bold text-center">Upload Portfolio</h2>
+                  <div className="border-2 border-dashed rounded-xl p-8 text-center">
+                    <Icons.Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-600">Drop CSV or click to browse</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <h3 className="font-medium mb-2">Demo Portfolio</h3>
+                    {PORTFOLIO.map(c => (
+                      <div key={c.id} className="flex justify-between text-sm py-1">
+                        <span className="font-medium">{c.ticker}</span>
+                        <span className="text-gray-500">{c.name}</span>
+                        <span className="text-gray-400">{c.meetingDate}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <button onClick={finish} className="w-full bg-teal-700 text-white py-3 rounded-lg font-medium">Go to Dashboard</button>
+                </div>
+              )}
+            </main>
+          </div>
+        );
+      }
+
+      // USAGE - DASHBOARD
+      if (!company) {
+        return (
+          <div className="min-h-screen bg-gray-100">
+            <header className="bg-white border-b sticky top-0 z-10">
+              <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-teal-700 rounded-lg flex items-center justify-center"><Icons.Vote className="w-6 h-6 text-white" /></div>
+                  <div><h1 className="font-bold">DragonVOTE</h1><p className="text-xs text-gray-500">{policyName}</p></div>
+                </div>
+              </div>
+            </header>
+            <main className="max-w-6xl mx-auto px-6 py-8">
+              <h2 className="text-2xl font-bold mb-6">Upcoming Meetings</h2>
+              <div className="grid grid-cols-4 gap-4 mb-6">
+                <div className="bg-white rounded-xl border p-4"><div className="text-2xl font-bold">{PORTFOLIO.length}</div><div className="text-sm text-gray-500">Total</div></div>
+                <div className="bg-white rounded-xl border p-4"><div className="text-2xl font-bold text-green-600">{PORTFOLIO.filter(p => p.status === 'ready').length}</div><div className="text-sm text-gray-500">Ready</div></div>
+                <div className="bg-white rounded-xl border p-4"><div className="text-2xl font-bold text-yellow-600">{PORTFOLIO.filter(p => p.status === 'pending').length}</div><div className="text-sm text-gray-500">Pending</div></div>
+                <div className="bg-white rounded-xl border p-4"><div className="text-2xl font-bold text-red-600">{PORTFOLIO.reduce((a,p) => a + (p.concernCount||0), 0)}</div><div className="text-sm text-gray-500">Concerns</div></div>
+              </div>
+              <div className="bg-white rounded-xl border">
+                <div className="px-4 py-3 border-b bg-gray-50 font-semibold">Meetings</div>
+                {PORTFOLIO.map(c => (
+                  <div key={c.id} onClick={() => openCompany(c)} className={`p-4 flex items-center justify-between border-b ${c.status === 'ready' ? 'hover:bg-teal-50 cursor-pointer' : 'opacity-60'}`}>
+                    <div className="flex items-center gap-4">
+                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${c.status === 'ready' ? 'bg-green-100' : 'bg-yellow-100'}`}>
+                        <Icons.Calendar className={`w-5 h-5 ${c.status === 'ready' ? 'text-green-600' : 'text-yellow-600'}`} />
+                      </div>
+                      <div>
+                        <span className="font-semibold">{c.name}</span> <span className="text-gray-500">({c.ticker})</span>
+                        <div className="text-sm text-gray-500">{c.sector}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-6">
+                      <div className="text-right">
+                        <div className="text-sm font-medium">{c.meetingDate}</div>
+                        <div className="text-xs text-gray-500">Vote by {c.voteDeadline}</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm">{c.proposalCount} proposals</div>
+                        {c.concernCount > 0 && <div className="text-xs text-red-600 flex items-center gap-1"><Icons.AlertTriangle className="w-3 h-3" />{c.concernCount}</div>}
+                      </div>
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${c.status === 'ready' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                        {c.status === 'ready' ? 'Ready' : 'Pending'}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </main>
+          </div>
+        );
+      }
+
+      // USAGE - COMPANY REPORT
+      const C = XYZ_COMPANY;
+      return (
+        <div className="min-h-screen bg-gray-100">
+          <header className="bg-white border-b sticky top-0 z-20 no-print">
+            <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <button onClick={closeCompany} className="text-gray-500 hover:text-gray-700"><Icons.ChevronLeft className="w-5 h-5" /></button>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-teal-700 rounded-lg flex items-center justify-center"><Icons.Vote className="w-6 h-6 text-white" /></div>
+                  <div><h1 className="font-bold">DragonVOTE</h1><p className="text-xs text-gray-500">{policyName}</p></div>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button className="px-4 py-2 bg-teal-700 text-white rounded-lg text-sm flex items-center gap-2"><Icons.Download className="w-4 h-4" />Export</button>
+              </div>
+            </div>
+          </header>
+
+          <main className="max-w-7xl mx-auto px-6 py-8">
+            {/* Report Header */}
+            <div className="bg-gradient-to-r from-teal-800 to-teal-600 rounded-xl p-6 text-white mb-6">
+              <div className="flex justify-between">
+                <div>
+                  <div className="text-teal-200 text-sm mb-1">DragonVOTE Report</div>
+                  <h1 className="text-3xl font-bold">{C.name}</h1>
+                  <p className="text-teal-200">{C.exchange}: {C.ticker}</p>
+                  <p className="text-sm mt-1">{C.sector} • {C.industry}</p>
+                  <div className="flex gap-1 mt-2">{C.indices.map(i => <span key={i} className="bg-teal-700/50 px-2 py-0.5 rounded text-xs">{i}</span>)}</div>
+                </div>
+                <div className="text-right text-sm">
+                  <div>Meeting: <strong>{C.meetingDate}</strong></div>
+                  <div>Record: {C.recordDate}</div>
+                  <div>Report: {C.reportDate}</div>
+                  <div className="mt-2">State: {C.incorporation}</div>
+                  <div>HQ: {C.headquarters}</div>
+                  <div className="mt-4 bg-teal-900/50 px-3 py-2 rounded">
+                    <div className="text-teal-200 text-xs">Report for</div>
+                    <div className="font-semibold">{C.clientName}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Index Sidebar + Content */}
+            <div className="flex gap-6">
+              <div className="w-56 flex-shrink-0 no-print">
+                <div className="bg-white rounded-lg border p-4 sticky top-24">
+                  <h3 className="font-semibold text-sm mb-3">Index</h3>
+                  {['Agenda','Ownership','Holders','Dual Class','Financials','Governance','Board','Directors','Compensation','Prior Votes','Updates'].map((s,i) => (
+                    <a key={i} href={`#s${i+1}`} className="block text-sm py-1 text-gray-600 hover:text-teal-700">{i+1}. {s}</a>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex-1 space-y-6">
+                {/* 1. Annual Meeting Agenda */}
+                <Section id="s1" title="Annual Meeting Agenda">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-teal-700 text-white">
+                        <th className="px-3 py-2 text-left">Item</th>
+                        <th className="px-3 py-2 text-left">Matter</th>
+                        <th className="px-3 py-2 text-center">{C.ticker} Board</th>
+                        <th className="px-3 py-2 text-center">DragonVOTE</th>
+                        <th className="px-3 py-2 text-left">Reasons</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="bg-gray-100 font-medium"><td className="px-3 py-2" colSpan="5">Election of directors</td></tr>
+                      {BALLOT.filter(b => b.type === 'director').map((b,i) => (
+                        <tr key={b.id} className={i%2===0?'bg-white':'bg-gray-50'}>
+                          <td className="px-3 py-2">{b.id}</td>
+                          <td className="px-3 py-2">{b.matter}</td>
+                          <td className="px-3 py-2 text-center">{b.board}</td>
+                          <td className={`px-3 py-2 text-center font-semibold ${b.dragon==='Against'?'text-red-600':'text-green-600'}`}>{b.dragon}</td>
+                          <td className="px-3 py-2 text-xs text-teal-600">{b.reason}</td>
+                        </tr>
+                      ))}
+                      {BALLOT.filter(b => b.type !== 'director' && b.type !== 'shareholder' && b.type !== 'mgmt').map((b,i) => (
+                        <tr key={b.id} className={i%2===0?'bg-white':'bg-gray-50'}>
+                          <td className="px-3 py-2">{b.id}</td>
+                          <td className="px-3 py-2">{b.matter}</td>
+                          <td className="px-3 py-2 text-center">{b.board}</td>
+                          <td className={`px-3 py-2 text-center font-semibold ${b.dragon==='Against'?'text-red-600':'text-green-600'}`}>{b.dragon}</td>
+                          <td className="px-3 py-2 text-xs text-teal-600">{b.reason}</td>
+                        </tr>
+                      ))}
+                      <tr className="bg-gray-100 font-medium"><td className="px-3 py-2" colSpan="5">Shareholder proposals</td></tr>
+                      {BALLOT.filter(b => b.type === 'shareholder').map((b,i) => (
+                        <tr key={b.id} className={i%2===0?'bg-white':'bg-gray-50'}>
+                          <td className="px-3 py-2">{b.id}</td>
+                          <td className="px-3 py-2">{b.matter}</td>
+                          <td className="px-3 py-2 text-center">{b.board}</td>
+                          <td className={`px-3 py-2 text-center font-semibold ${b.dragon==='Against'?'text-red-600':b.dragon==='For'?'text-green-600':''}`}>{b.dragon}</td>
+                          <td className="px-3 py-2 text-xs text-teal-600">{b.reason}</td>
+                        </tr>
+                      ))}
+                      {BALLOT.filter(b => b.type === 'mgmt').map((b,i) => (
+                        <tr key={b.id} className={i%2===0?'bg-white':'bg-gray-50'}>
+                          <td className="px-3 py-2">{b.id}</td>
+                          <td className="px-3 py-2">{b.matter}</td>
+                          <td className="px-3 py-2 text-center">{b.board}</td>
+                          <td className={`px-3 py-2 text-center font-semibold ${b.dragon==='Against'?'text-red-600':'text-green-600'}`}>{b.dragon}</td>
+                          <td className="px-3 py-2 text-xs text-teal-600">{b.reason}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </Section>
+
+                {/* 2. Share Ownership */}
+                <Section id="s2" title="Share Ownership">
+                  <div className="grid grid-cols-2 gap-8">
+                    <table className="text-sm">
+                      <tbody>
+                        <tr className="border-b"><td className="py-2">NEOs</td><td className="py-2 text-right font-semibold">{C.ownership.neos}%</td></tr>
+                        <tr className="border-b"><td className="py-2">Non-exec directors</td><td className="py-2 text-right font-semibold">{C.ownership.nonExecDirectors}%</td></tr>
+                        <tr><td className="py-2">13D filers</td><td className="py-2 text-right font-semibold">{C.ownership.thirteenD}%</td></tr>
+                      </tbody>
+                    </table>
+                    <div>
+                      <h4 className="text-sm font-semibold text-teal-700 mb-2">13G Filers</h4>
+                      <table className="text-sm w-full">
+                        <tbody>
+                          {C.ownership.thirteenG.map(h => <tr key={h.name} className="border-b"><td className="py-1">~ {h.name}</td><td className="py-1 text-right font-semibold">{h.pct}%</td></tr>)}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </Section>
+
+                {/* 3. Largest Holders */}
+                <Section id="s3" title="Largest Institutional Holders">
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    {C.largestHolders.map(h => (
+                      <div key={h.rank} className="flex justify-between py-1 border-b">
+                        <span><strong className="text-teal-700 mr-2">{h.rank}</strong>{h.name}</span>
+                        <span className="font-semibold">{h.pct}%</span>
+                      </div>
+                    ))}
+                  </div>
+                </Section>
+
+                {/* 4. Dual Class */}
+                <Section id="s4" title="Dual Class Analysis">
+                  <table className="text-sm w-full">
+                    <thead><tr className="bg-teal-100"><th className="px-3 py-2"></th>{C.dualClass.classes.map(c => <th key={c.name} className="px-3 py-2">{c.name}</th>)}</tr></thead>
+                    <tbody>
+                      <tr className="border-b"><td className="px-3 py-2">Held by</td>{C.dualClass.classes.map(c => <td key={c.name} className="px-3 py-2 text-center">{c.heldBy}</td>)}</tr>
+                      <tr className="border-b"><td className="px-3 py-2">Votes per share</td>{C.dualClass.classes.map(c => <td key={c.name} className="px-3 py-2 text-center font-semibold">{c.votesPerShare}</td>)}</tr>
+                      <tr className="border-b"><td className="px-3 py-2">Total vote</td>{C.dualClass.classes.map(c => <td key={c.name} className="px-3 py-2 text-center">{c.totalVote}%</td>)}</tr>
+                      <tr><td className="px-3 py-2">Economic interest</td>{C.dualClass.classes.map(c => <td key={c.name} className="px-3 py-2 text-center">{c.economicInterest}%</td>)}</tr>
+                    </tbody>
+                  </table>
+                </Section>
+
+                {/* 5. Financial Highlights */}
+                <Section id="s5" title="Financial Highlights">
+                  <div className="grid grid-cols-2 gap-8">
+                    <div>
+                      <h4 className="text-sm font-semibold text-teal-700 mb-2">TSR (Annualized)</h4>
+                      <table className="text-sm w-full">
+                        <thead><tr className="bg-teal-100"><th className="px-2 py-1 text-left"></th><th className="px-2 py-1 text-right">1 Yr</th><th className="px-2 py-1 text-right">3 Yr</th><th className="px-2 py-1 text-right">5 Yr</th></tr></thead>
+                        <tbody>
+                          <tr className="border-b"><td className="px-2 py-1">Company</td><td className="px-2 py-1 text-right font-semibold text-green-600">{C.financials.tsr.y1}</td><td className="px-2 py-1 text-right">{C.financials.tsr.y3}</td><td className="px-2 py-1 text-right">{C.financials.tsr.y5}</td></tr>
+                          <tr className="border-b"><td className="px-2 py-1">GICS</td><td className="px-2 py-1 text-right">{C.financials.gicsTsr.y1}</td><td className="px-2 py-1 text-right text-red-600">{C.financials.gicsTsr.y3}</td><td className="px-2 py-1 text-right">{C.financials.gicsTsr.y5}</td></tr>
+                          <tr><td className="px-2 py-1">S&P 500</td><td className="px-2 py-1 text-right">{C.financials.spTsr.y1}</td><td className="px-2 py-1 text-right">{C.financials.spTsr.y3}</td><td className="px-2 py-1 text-right">{C.financials.spTsr.y5}</td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-semibold text-teal-700 mb-2">Snapshot</h4>
+                      <table className="text-sm w-full">
+                        <tbody>
+                          <tr className="border-b"><td className="py-1">Market Cap (M)</td><td className="py-1 text-right font-semibold">${C.financials.marketCap.toLocaleString()}</td></tr>
+                          <tr className="border-b"><td className="py-1">Closing Price</td><td className="py-1 text-right">${C.financials.closingPrice}</td></tr>
+                          <tr className="border-b"><td className="py-1">52-Week High</td><td className="py-1 text-right">${C.financials.high52}</td></tr>
+                          <tr><td className="py-1">52-Week Low</td><td className="py-1 text-right">${C.financials.low52}</td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </Section>
+
+                {/* 6. Corporate Governance */}
+                <Section id="s6" title="Corporate Governance Profile">
+                  <div className="grid grid-cols-2 gap-8 text-sm">
+                    <div>
+                      <h4 className="font-semibold text-teal-700 mb-2">Board Summary</h4>
+                      <table className="w-full">
+                        <tbody>
+                          <tr className="border-b"><td className="py-1">Chair classification</td><td className="py-1 text-right">{C.governance.chairClassification}</td></tr>
+                          <tr className="border-b"><td className="py-1">Separate Chair/CEO</td><td className="py-1 text-right">{C.governance.separateChairCEO ? 'Yes' : 'No'}</td></tr>
+                          <tr className="border-b"><td className="py-1">Independent lead director</td><td className="py-1 text-right">{C.governance.independentLead ? 'Yes' : 'No'}</td></tr>
+                          <tr className="border-b"><td className="py-1">Voting standard</td><td className="py-1 text-right">{C.governance.votingStandard}</td></tr>
+                          <tr className="border-b"><td className="py-1">Avg director age</td><td className="py-1 text-right">{C.governance.avgAge} years</td></tr>
+                          <tr className="border-b"><td className="py-1">Avg director tenure</td><td className="py-1 text-right">{C.governance.avgTenure} years</td></tr>
+                          <tr><td className="py-1">% Women on board</td><td className="py-1 text-right">{C.governance.pctWomen}%</td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-teal-700 mb-2">Shareholder Rights</h4>
+                      <table className="w-full">
+                        <tbody>
+                          <tr className="border-b"><td className="py-1">Proxy Access</td><td className="py-1 text-right">{C.governance.proxyAccess ? 'Yes' : 'No'}</td></tr>
+                          <tr className="border-b"><td className="py-1">- Ownership req (%)</td><td className="py-1 text-right">{C.governance.proxyAccessOwn}</td></tr>
+                          <tr className="border-b"><td className="py-1">- Time req (years)</td><td className="py-1 text-right">{C.governance.proxyAccessTime}</td></tr>
+                          <tr><td className="py-1">Poison pill</td><td className="py-1 text-right">{C.governance.poisonPill ? 'Yes' : 'No'}</td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </Section>
+
+                {/* 7. Board Profile */}
+                <Section id="s7" title="Board Profile">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-teal-100">
+                        <th className="px-2 py-2 text-left">Item</th>
+                        <th className="px-2 py-2 text-left">Director</th>
+                        <th className="px-2 py-2 text-left">Role</th>
+                        <th className="px-2 py-2 text-center">Independence</th>
+                        <th className="px-2 py-2 text-center">Gender</th>
+                        <th className="px-2 py-2 text-center">Age</th>
+                        <th className="px-2 py-2 text-center">Tenure</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {C.directors.map((d,i) => (
+                        <tr key={d.item} className={`${i%2===0?'bg-white':'bg-gray-50'} ${d.flag?'text-red-700':''}`}>
+                          <td className="px-2 py-2">{d.item}</td>
+                          <td className="px-2 py-2 font-medium">{d.name}</td>
+                          <td className="px-2 py-2">{d.role}</td>
+                          <td className="px-2 py-2 text-center">{d.ind}</td>
+                          <td className="px-2 py-2 text-center">{d.gender}</td>
+                          <td className="px-2 py-2 text-center">{d.age}</td>
+                          <td className="px-2 py-2 text-center">{d.tenure}</td>
+                        </tr>
+                      ))}
+                      <tr className="bg-teal-700 text-white font-semibold">
+                        <td className="px-2 py-2" colSpan="3"></td>
+                        <td className="px-2 py-2 text-center">{C.governance.pctIndependent}% Ind.</td>
+                        <td className="px-2 py-2 text-center">{C.governance.pctWomen}% F</td>
+                        <td className="px-2 py-2 text-center">Ave: {C.governance.avgAge}</td>
+                        <td className="px-2 py-2 text-center">Ave: {C.governance.avgTenure}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </Section>
+
+                {/* 8. Compensation */}
+                <Section id="s8" title="Executive Compensation Summary">
+                  <div className="grid grid-cols-2 gap-8">
+                    <div>
+                      <h4 className="text-sm font-semibold text-teal-700 mb-2">CEO Compensation ($ thousands)</h4>
+                      <table className="w-full text-sm">
+                        <tbody>
+                          <tr className="border-b"><td className="py-1">Base salary</td><td className="py-1 text-right">{C.compensation.ceo.salary.toLocaleString()}</td></tr>
+                          <tr className="border-b"><td className="py-1">Bonus</td><td className="py-1 text-right">{C.compensation.ceo.bonus.toLocaleString()}</td></tr>
+                          <tr className="border-b"><td className="py-1">Restricted stock</td><td className="py-1 text-right">{C.compensation.ceo.stock.toLocaleString()}</td></tr>
+                          <tr className="border-b"><td className="py-1">Option grant</td><td className="py-1 text-right">{C.compensation.ceo.options.toLocaleString()}</td></tr>
+                          <tr className="bg-teal-50 font-semibold"><td className="py-1">Total</td><td className="py-1 text-right">{C.compensation.ceo.total.toLocaleString()}</td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-semibold text-teal-700 mb-2">Benchmarks</h4>
+                      <table className="w-full text-sm">
+                        <tbody>
+                          <tr className="border-b"><td className="py-1">Peer median</td><td className="py-1 text-right">${C.compensation.peerMedian.toLocaleString()}</td></tr>
+                          <tr><td className="py-1">CEO pay ratio</td><td className="py-1 text-right">{C.compensation.ceoPayRatio}:1</td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </Section>
+
+                {/* 9. Prior Year Results */}
+                <Section id="s9" title="Prior Year Voting Results">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-teal-100">
+                        <th className="px-2 py-2 text-left">Proposal</th>
+                        <th className="px-2 py-2 text-center">Board</th>
+                        <th className="px-2 py-2 text-center">ISS</th>
+                        <th className="px-2 py-2 text-center">Result</th>
+                        <th className="px-2 py-2 text-center">Support %</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {C.priorResults.map((r,i) => (
+                        <tr key={i} className={i%2===0?'bg-white':'bg-gray-50'}>
+                          <td className="px-2 py-2">{r.prop}</td>
+                          <td className="px-2 py-2 text-center">{r.board}</td>
+                          <td className="px-2 py-2 text-center">{r.iss}</td>
+                          <td className={`px-2 py-2 text-center font-semibold ${r.result==='Pass'?'text-green-600':'text-red-600'}`}>{r.result}</td>
+                          <td className="px-2 py-2 text-center">{r.support}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </Section>
+
+                {/* 10. Company Updates */}
+                <Section id="s10" title="Company Updates">
+                  {C.updates.map((u,i) => (
+                    <div key={i} className="mb-4">
+                      <h4 className="font-semibold text-teal-700">{u.title}</h4>
+                      <p className="text-sm text-gray-700 mt-1">{u.text}</p>
+                    </div>
+                  ))}
+                </Section>
+
+              </div>
+            </div>
+          </main>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+
 </body>
 </html>
